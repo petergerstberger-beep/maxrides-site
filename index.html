@@ -269,17 +269,12 @@
 
     function fmt(n) { return '$' + n.toLocaleString('en-US'); }
 
-    function tierLabel(tier) {
-      return { budget: 'Budget', mid: 'Mid', premium: 'Premium', halo: 'Halo' }[tier] || '';
-    }
-
     function bikeCardHtml(bike) {
       var slug = encodeURIComponent(bike.slug);
       return [
         '<a href="bike.html?slug=' + slug + '" class="bike-card">',
           '<div class="bike-card__media">',
             window.bikeImage(bike.slug, '#FF5A1F'),
-            '<span class="bike-card__tier">' + tierLabel(bike.tier) + '</span>',
           '</div>',
           '<div class="bike-card__body">',
             '<p class="bike-card__brand">' + escapeHtml(bike.brand) + '</p>',
