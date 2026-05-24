@@ -36,7 +36,14 @@
       align-items: center;
       justify-content: center;
     }
-    .builder-hero__stage svg { width: 100%; height: 100%; }
+    .builder-hero__stage svg,
+    .builder-hero__stage img.bike-photo {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      transition: filter var(--dur-base) var(--ease-out);
+    }
     .builder-hero__meta { text-align: right; }
     .builder-hero__bike {
       font-size: 13px;

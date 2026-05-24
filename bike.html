@@ -23,7 +23,13 @@
       margin: var(--space-8) 0;
       box-shadow: var(--shadow-glow);
     }
-    .bd-stage svg { width: 100%; height: auto; }
+    .bd-stage svg,
+    .bd-stage img.bike-photo {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: contain;
+      display: block;
+    }
     .bd-dots {
       display: flex;
       gap: 6px;

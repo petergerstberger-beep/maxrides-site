@@ -240,6 +240,23 @@
     });
   }
 
+  // Convert a hex color to its hue value (degrees, 0–360)
+  function hexToHue(hex) {
+    hex = String(hex || '').replace('#', '');
+    if (hex.length !== 6) return 0;
+    var r = parseInt(hex.slice(0,2),16)/255;
+    var g = parseInt(hex.slice(2,4),16)/255;
+    var b = parseInt(hex.slice(4,6),16)/255;
+    var max = Math.max(r,g,b), min = Math.min(r,g,b);
+    if (max === min) return 0; // grayscale
+    var d = max - min, h = 0;
+    if (max === r) h = ((g-b)/d + (g<b?6:0))*60;
+    else if (max === g) h = ((b-r)/d + 2)*60;
+    else h = ((r-g)/d + 4)*60;
+    return Math.round(h);
+  }
+  var ORANGE_HUE = hexToHue('#FF5A1F'); // ~17
+
   // ---------- Bike preview + total ----------
   function renderPreview() {
     var stage = $('#builder-stage');
@@ -247,6 +264,20 @@
     stage.setAttribute('data-accent', state.frameColor.hex);
     if (window.bikeImage) {
       stage.innerHTML = window.bikeImage(state.bikeSlug, state.frameColor.hex);
+    }
+    // Apply CSS color filter to the bike image so picking a frame color
+    // visibly tints the preview. Black/white = no filter (natural bike).
+    var img = stage.querySelector('img.bike-photo');
+    if (img) {
+      var id = state.frameColor.id;
+      if (id === 'jet-black') {
+        img.style.filter = 'brightness(0.85) saturate(0.6)';
+      } else if (id === 'arctic-white') {
+        img.style.filter = 'brightness(1.12) saturate(0.5)';
+      } else {
+        var offset = hexToHue(state.frameColor.hex) - ORANGE_HUE;
+        img.style.filter = 'hue-rotate(' + offset + 'deg) saturate(1.15)';
+      }
     }
     var bike = DATA.findBike(state.bikeSlug);
     $('#builder-bike-label').textContent = 'Building · ' + bike.name;
