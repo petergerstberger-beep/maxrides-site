@@ -64,6 +64,29 @@
       }
     },
     {
+      slug: 'talaria-dragon',
+      brand: 'Talaria',
+      name: 'Talaria Dragon',
+      category: 'dirt',
+      tier: 'premium',
+      silhouette: 'dirt',
+      photoUrl: 'https://talariausa.us.com/wp-content/uploads/2024/12/Talaria-Dragon.png',
+      tagline: '88V. 70 mph. Hard-enduro killer.',
+      heroCopy: '28 kW peak. 5.2 kWh battery. ABS + traction control + 4.3" Bluetooth TFT dash. The most capable Talaria.',
+      basePrice: 5999,
+      rating: 4.9,
+      reviewCount: 187,
+      specs: {
+        topSpeed: '70 mph',
+        range: '93 mi',
+        motor: '28 kW peak / 88V long-travel',
+        torque: '630 N·m rear-wheel',
+        weight: '220 lb (100 kg)',
+        battery: '5.2 kWh Li-ion',
+        suspension: 'Adjustable air fork'
+      }
+    },
+    {
       slug: 'talaria-sting-mx4',
       brand: 'Talaria',
       name: 'Talaria Sting R MX4',
@@ -266,25 +289,25 @@
 
     // ===== COMMUTER =====
     {
-      slug: 'macfox-x2',
-      brand: 'Macfox',
-      name: 'Macfox X2',
+      slug: 'super73-zx-le-speedway',
+      brand: 'Super73',
+      name: 'Super73-ZX LE Speedway',
       category: 'commuter',
-      tier: 'budget',
+      tier: 'mid',
       silhouette: 'starter',
-      photoUrl: 'https://emotosuperstore.com/cdn/shop/files/macfox-x2-electric-mountain-bikeemoto-superstore-4784904.png?v=1762492798',
-      tagline: 'Fat-tire commuter. TikTok-famous.',
-      heroCopy: '750 W hub motor (1,000 W peak). 65 N·m torque. Dual-battery option for 90-mile range. 20"×4" fat tires.',
-      basePrice: 1699,
-      rating: 4.6,
-      reviewCount: 3412,
+      photoUrl: 'https://super73.com/cdn/shop/files/SUPER73_MY24_ZX_LE_Speedway_FrontHero_ae17fef4-1f56-4e49-92be-7fec9d435417.jpg?v=1724196317',
+      tagline: 'Limited Edition. Speedway colorway.',
+      heroCopy: 'The ZX in its Speedway trim — gold accents, custom seat. Class-3 e-bike with off-road unlock. Limited run.',
+      basePrice: 3288,
+      rating: 4.8,
+      reviewCount: 412,
       specs: {
-        topSpeed: '28 mph',
-        range: '40–45 mi (90 mi w/ dual battery)',
-        motor: '750 W rear hub (1,000 W peak)',
-        torque: '65 N·m',
-        weight: '65 lb',
-        battery: '48V 20Ah (960 Wh, dual optional)'
+        topSpeed: '28+ mph (Class 3 / Unlimited)',
+        range: '25–50 mi',
+        motor: '750 W (1,350 W peak)',
+        weight: '69 lb',
+        battery: '615 Wh removable',
+        suspension: 'Telescopic front fork'
       }
     }
   ];
@@ -294,7 +317,7 @@
   var BIKE_CATEGORIES = [
     { id: 'dirt',     label: 'Dirt rockets',     tagline: 'Built for the trail and the air.' },
     { id: 'street',   label: 'Street cruisers',  tagline: 'Made for the road and the school drop-off.' },
-    { id: 'commuter', label: 'Commuter',         tagline: 'Fat-tire, long-range, fully practical.' }
+    { id: 'commuter', label: 'Commuter',         tagline: 'Smaller frame. School-ready. Limited trim.' }
   ];
 
   // ----- Tier ranks (used by Builder mod-filter) ------------------
@@ -742,9 +765,9 @@
       caption: 'Hit a 6ft step-down at the spillway. MX4 frame is bulletproof.',
       mods: ['FastAce ALX13RC 2.0', 'MaxxEnduro', 'Galfer Wave 220 mm rotor'],
       finish: '#D11515' },
-    { id: 'r4', handle: '@eli11', age: 11, city: 'Tulsa, OK', bike: 'macfox-x2',
+    { id: 'r4', handle: '@eli11', age: 11, city: 'Tulsa, OK', bike: 'super73-zx-le-speedway',
       kind: 'REVEAL', when: '3 hr ago', likes: 1411, comments: 56, shares: 22,
-      caption: 'My very first e-bike. I named her Sparky.',
+      caption: 'My very first e-bike. The Speedway trim is sick. I named her Sparky.',
       mods: ['Orange plate', 'Adventure Mirror V2 pair'],
       finish: '#C8FF00' },
     { id: 'r5', handle: '@sofiarides', age: 13, city: 'Brooklyn, NY', bike: 'super73-zx',
@@ -780,10 +803,10 @@
       verifiedBuild: 'Super73 RX + Matte clear', helpful: 64, withPhotos: false, isParent: true,
       title: 'Worth every penny (says the parent).',
       body: 'Bought the RX for my daughter\'s 13th. The builder was fun for HER to use. Shipped in a week. She hasn\'t stopped riding. Safer than a moped, faster than her old bike.' },
-    { id: 'rv3', stars: 4, when: '1 month ago', author: 'Eli K.', age: '11', city: 'Tulsa',
-      verifiedBuild: 'Macfox X2 — stock build', helpful: 41, withPhotos: true,
-      title: 'Sick bike, wish I\'d sprung for the dual-battery.',
-      body: 'Looks insane, handles great, but the single-battery only gets me about 30 miles. Should\'ve paid for the dual. Lesson learned.' },
+    { id: 'rv3', stars: 5, when: '1 month ago', author: 'Eli K.', age: '11', city: 'Tulsa',
+      verifiedBuild: 'Super73-ZX LE Speedway', helpful: 41, withPhotos: true,
+      title: 'My first e-bike. Speedway trim is unreal.',
+      body: 'Got the ZX LE for my 11th birthday. The Speedway gold accents look like nothing else at my school. Fits me perfect, hits 28 in Class-3 mode.' },
     { id: 'rv4', stars: 5, when: '1 month ago', author: 'Marcus T.', age: '15', city: 'Phoenix',
       verifiedBuild: 'Talaria Sting MX4 + Forged carbon + Magura MT5', helpful: 56, withPhotos: true,
       title: 'The brakes alone justify the upgrade.',
