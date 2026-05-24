@@ -294,7 +294,7 @@
         var modsText = item.lineItems.slice(1).map(function (li) { return li.label.replace(/^[^:]+: /, ''); }).join(' · ');
         if (!modsText) modsText = 'Stock build';
         div.innerHTML =
-          '<div class="wl-card__thumb">' + window.BIKE_SVG[item.bike](item.colorHex || '#FF5A1F') + '</div>' +
+          '<div class="wl-card__thumb">' + window.bikeImage(item.bike, item.colorHex || '#FF5A1F') + '</div>' +
           '<div>' +
             '<p class="caption text-accent" style="text-transform:uppercase;letter-spacing:0.12em;">' + (item.bikeName.replace(/^The /, '')) + '</p>' +
             '<div class="wl-card__title">' + escapeHtml(item.title) + '</div>' +

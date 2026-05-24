@@ -4,10 +4,135 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0A0A0A">
-  <title>MaxRides — Customizable electric dirt bikes &amp; cruisers for teens</title>
-  <meta name="description" content="Premium customizable e-bikes for teens. Pick your bike, build it with real Sur-Ron and Talaria-grade components, and share your dream build with the world.">
+  <title>MaxRides — Real teen e-bikes. Real brands. Built it.</title>
+  <meta name="description" content="The curated store for real-world teen e-bikes. Sur-Ron, Talaria, Super73, Onyx, Stark VARG, ETM, MacFox, Rawrr. Configure across 21 component categories.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="assets/css/styles.css">
+  <style>
+    /* ===== Home page — dropship grid ===== */
+
+    .home-hero {
+      padding: var(--space-12) 0 var(--space-10);
+      text-align: left;
+    }
+    .home-hero h1 { margin-top: var(--space-3); }
+    .home-hero .body-lg { max-width: 56ch; margin-top: var(--space-4); color: var(--text-secondary); }
+    .home-hero__cta-row {
+      display: flex;
+      gap: var(--space-3);
+      margin-top: var(--space-6);
+      flex-wrap: wrap;
+    }
+
+    .bike-cat { padding: var(--space-10) 0; border-top: 1px solid var(--border); }
+    .bike-cat:first-of-type { border-top: none; }
+    .bike-cat__head { margin-bottom: var(--space-6); }
+    .bike-cat__head h2 { margin-top: var(--space-2); }
+    .bike-cat__head p.body { color: var(--text-secondary); margin-top: var(--space-2); max-width: 48ch; }
+
+    .bike-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-4);
+    }
+    @media (max-width: 900px) { .bike-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 540px) { .bike-grid { grid-template-columns: 1fr; } }
+
+    .bike-card {
+      display: flex;
+      flex-direction: column;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transition:
+        transform var(--dur-fast) var(--ease-out),
+        border-color var(--dur-fast) var(--ease-out);
+      text-decoration: none;
+      color: inherit;
+    }
+    .bike-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--text-tertiary);
+    }
+    .bike-card__media {
+      background: radial-gradient(ellipse at center, #181818 0%, #0A0A0A 70%);
+      padding: var(--space-4);
+      aspect-ratio: 16 / 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .bike-card__media svg { width: 100%; height: auto; }
+    .bike-card__media img.bike-photo {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .bike-card__tier {
+      position: absolute;
+      top: var(--space-3);
+      right: var(--space-3);
+      background: rgba(255, 90, 31, 0.12);
+      color: var(--accent);
+      border: 1px solid rgba(255, 90, 31, 0.4);
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .bike-card__body {
+      padding: var(--space-5);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .bike-card__brand {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+    .bike-card__name {
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--text-primary);
+      line-height: var(--lh-snug);
+    }
+    .bike-card__tagline {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 6px;
+      line-height: var(--lh-normal);
+    }
+    .bike-card__footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-top: var(--space-4);
+      padding-top: var(--space-4);
+      border-top: 1px solid var(--border);
+    }
+    .bike-card__price {
+      font-size: 20px;
+      font-weight: 500;
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+    }
+    .bike-card__cta {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+    .bike-card__cta::after {
+      content: ' →';
+      color: var(--accent);
+    }
+  </style>
 </head>
 <body>
 
@@ -29,209 +154,64 @@
 
   <main>
 
-    <!-- ===== 01 · DIRT ===== -->
-    <section class="hero-slide" aria-labelledby="dirt-title">
-      <div class="hero-slide__inner">
-        <div class="reveal">
-          <p class="eyebrow section-label">01 · Dirt</p>
-        </div>
-        <div class="bike-stage bike-stage--tall reveal" data-delay="1" data-bike="dirt-01" data-accent="#FF5A1F"></div>
-        <div class="reveal" data-delay="2">
-          <h1 id="dirt-title" class="display" style="margin-top:var(--space-10);">The Dirt 01.</h1>
-          <p class="body-lg" style="margin-top:var(--space-3); max-width:46ch;">Built for the trail. Sur-Ron silhouette, MaxRides finish. Wired to disappear into the dirt and reappear on every feed.</p>
-        </div>
-        <div class="reveal" data-delay="3">
-          <p class="hero-slide__price" style="margin-top:var(--space-6);">From $2,499</p>
-          <div class="hero-slide__actions">
-            <a href="build.html?bike=dirt-01" class="btn btn--primary btn--lg">Build it<span class="btn__arrow">→</span></a>
-            <a href="bike.html?slug=dirt-01" class="btn btn--secondary btn--lg">Specs</a>
-          </div>
-        </div>
-      </div>
-      <span class="hero-slide__scrollhint" aria-hidden="true">⌄</span>
-    </section>
-
-    <hr class="section-divider">
-
-    <!-- ===== 02 · CRUISER ===== -->
-    <section class="hero-slide" aria-labelledby="cruiser-title">
-      <div class="hero-slide__inner">
-        <div class="reveal">
-          <p class="eyebrow section-label">02 · Cruiser</p>
-        </div>
-        <div class="bike-stage bike-stage--tall reveal" data-delay="1" data-bike="cruiser" data-accent="#FF5A1F"></div>
-        <div class="reveal" data-delay="2">
-          <h1 id="cruiser-title" class="display" style="margin-top:var(--space-10);">The Cruiser.</h1>
-          <p class="body-lg" style="margin-top:var(--space-3); max-width:46ch;">Made for the streets. Long, low, banana-seated — built to roll up to school and have everyone ask what it is.</p>
-        </div>
-        <div class="reveal" data-delay="3">
-          <p class="hero-slide__price" style="margin-top:var(--space-6);">From $1,899</p>
-          <div class="hero-slide__actions">
-            <a href="build.html?bike=cruiser" class="btn btn--primary btn--lg">Build it<span class="btn__arrow">→</span></a>
-            <a href="bike.html?slug=cruiser" class="btn btn--secondary btn--lg">Specs</a>
-          </div>
-        </div>
-      </div>
-      <span class="hero-slide__scrollhint" aria-hidden="true">⌄</span>
-    </section>
-
-    <hr class="section-divider">
-
-    <!-- ===== 03 · STARTER ===== -->
-    <section class="hero-slide" aria-labelledby="starter-title">
-      <div class="hero-slide__inner">
-        <div class="reveal">
-          <p class="eyebrow section-label">03 · Starter</p>
-        </div>
-        <div class="bike-stage bike-stage--tall reveal" data-delay="1" data-bike="starter" data-accent="#FF5A1F"></div>
-        <div class="reveal" data-delay="2">
-          <h1 id="starter-title" class="display" style="margin-top:var(--space-10);">The Starter.</h1>
-          <p class="body-lg" style="margin-top:var(--space-3); max-width:46ch;">Every kid&rsquo;s first ride. Smaller frame, lower top speed, same MaxRides DNA.</p>
-        </div>
-        <div class="reveal" data-delay="3">
-          <p class="hero-slide__price" style="margin-top:var(--space-6);">From $999</p>
-          <div class="hero-slide__actions">
-            <a href="build.html?bike=starter" class="btn btn--primary btn--lg">Build it<span class="btn__arrow">→</span></a>
-            <a href="bike.html?slug=starter" class="btn btn--secondary btn--lg">Specs</a>
-          </div>
-        </div>
-      </div>
-      <span class="hero-slide__scrollhint" aria-hidden="true">⌄</span>
-    </section>
-
-    <hr class="section-divider">
-
-    <!-- ===== BUILDER TEASER ===== -->
-    <section class="section section--lg" aria-labelledby="builder-title">
-      <div class="container-base">
-        <div class="reveal">
-          <p class="eyebrow section-label">Builder</p>
-        </div>
-        <h2 id="builder-title" class="h1 reveal" data-delay="1" style="margin-top:var(--space-3);">Make it yours.</h2>
-        <p class="body-lg reveal" data-delay="2" style="margin-top:var(--space-3); max-width:48ch;">Twenty-one categories. Real components. ODI plates, EBMX batteries, Magura brakes, Warp 9 wheels, FastAce forks, Ruroc helmets. Every option spec&rsquo;d and priced.</p>
-        <div class="teaser-grid reveal" data-delay="3">
-          <div class="teaser-tile">
-            <div class="icon" aria-hidden="true">●</div>
-            <div class="label">Paint</div>
-          </div>
-          <div class="teaser-tile">
-            <div class="icon" aria-hidden="true">○</div>
-            <div class="label">Wheels</div>
-          </div>
-          <div class="teaser-tile">
-            <div class="icon" aria-hidden="true">▢</div>
-            <div class="label">Plate</div>
-          </div>
-          <div class="teaser-tile">
-            <div class="icon" aria-hidden="true">+17</div>
-            <div class="label">More</div>
-          </div>
-        </div>
-        <div class="reveal" data-delay="3">
-          <a href="build.html" class="btn btn--primary btn--lg">Open the builder<span class="btn__arrow">→</span></a>
-        </div>
+    <!-- ===== HERO ===== -->
+    <section class="home-hero container-base">
+      <p class="eyebrow">The store</p>
+      <h1 class="display">Real bikes. Real brands. Built it.</h1>
+      <p class="body-lg">The curated shop for the e-bikes teens actually ride — Sur-Ron, Talaria, Super73, Onyx, Stark, ETM, MacFox, Rawrr. Spec'd, priced, and customizable across 21 component categories.</p>
+      <div class="home-hero__cta-row">
+        <a href="build.html" class="btn btn--primary btn--lg">Open the builder<span class="btn__arrow">→</span></a>
+        <a href="rides.html" class="btn btn--secondary btn--lg">See what others built</a>
       </div>
     </section>
 
-    <hr class="section-divider">
+    <!-- ===== BIKE LINEUP (dynamic from data.js) ===== -->
+    <div class="container-base" id="bike-host"></div>
 
     <!-- ===== RIDES TEASER ===== -->
-    <section class="section section--lg" aria-labelledby="rides-title">
-      <div class="container-base">
-        <div class="reveal">
-          <p class="eyebrow section-label">Rides</p>
-        </div>
-        <h2 id="rides-title" class="h1 reveal" data-delay="1" style="margin-top:var(--space-3);">Real kids. Real rides.</h2>
-        <p class="body-lg reveal" data-delay="2" style="margin-top:var(--space-3); max-width:48ch;">A feed for bike addicts. First-ride reveals, trick clips, garage tours, mod drops &mdash; every clip shoppable. Tap any rider&rsquo;s build to remix it onto your own bike.</p>
-
-        <div class="rides-teaser reveal" data-delay="3" style="margin-top:var(--space-8);">
-          <article class="ride-tile">
-            <span class="badge ride-tile__badge">Trick clip</span>
-            <span class="ride-tile__play" aria-hidden="true"><span>▶</span></span>
-            <div class="ride-tile__meta">
-              <strong>@jadenrides &middot; 13</strong>
-              <span>Dirt 01 &middot; Black PVD &middot; ♡ 8.2k</span>
-            </div>
-          </article>
-          <article class="ride-tile">
-            <span class="badge ride-tile__badge">Reveal</span>
-            <span class="ride-tile__play" aria-hidden="true"><span>▶</span></span>
-            <div class="ride-tile__meta">
-              <strong>@mayacruises &middot; 14</strong>
-              <span>Cruiser &middot; Brown leather &middot; ♡ 2.1k</span>
-            </div>
-          </article>
-          <article class="ride-tile">
-            <span class="badge ride-tile__badge">Build update</span>
-            <span class="ride-tile__play" aria-hidden="true"><span>▶</span></span>
-            <div class="ride-tile__meta">
-              <strong>@coletheripper &middot; 15</strong>
-              <span>Dirt 01 &middot; Race red &middot; ♡ 6.8k</span>
-            </div>
-          </article>
-        </div>
-
-        <div class="reveal" data-delay="4" style="margin-top:var(--space-8);">
-          <a href="rides.html" class="btn btn--secondary btn--lg">See all rides<span class="btn__arrow">→</span></a>
-        </div>
+    <section class="section section--lg container-base" aria-labelledby="rides-title">
+      <p class="eyebrow section-label">Rides</p>
+      <h2 id="rides-title" class="h1" style="margin-top:var(--space-3);">Real kids. Real rides.</h2>
+      <p class="body-lg" style="margin-top:var(--space-3); max-width:48ch;">A feed for bike addicts. First-ride reveals, trick clips, garage tours, mod drops. Every clip shoppable. Tap any rider's build to remix it onto your own bike.</p>
+      <div style="margin-top:var(--space-6);">
+        <a href="rides.html" class="btn btn--secondary btn--lg">Open the feed<span class="btn__arrow">→</span></a>
       </div>
     </section>
 
     <hr class="section-divider">
 
     <!-- ===== REVIEWS TEASER ===== -->
-    <section class="section section--lg" aria-labelledby="reviews-title">
-      <div class="container-base">
-        <div class="reveal">
-          <p class="eyebrow section-label">Reviews</p>
+    <section class="section section--lg container-base" aria-labelledby="reviews-title">
+      <p class="eyebrow section-label">Reviews</p>
+      <h2 id="reviews-title" class="h1" style="margin-top:var(--space-3);">4.8 stars. 1,243 riders.</h2>
+      <div class="review-pull" style="margin-top:var(--space-8);">
+        <div>
+          <div class="review-pull__num numeric">4.8</div>
+          <div class="review-pull__stars" aria-hidden="true">★★★★★</div>
+          <div class="review-pull__count">1,243 verified reviews</div>
         </div>
-        <h2 id="reviews-title" class="h1 reveal" data-delay="1" style="margin-top:var(--space-3);">4.8 stars. 1,243 riders.</h2>
-
-        <div class="review-pull reveal" data-delay="2" style="margin-top:var(--space-8);">
-          <div>
-            <div class="review-pull__num numeric">4.8</div>
-            <div class="review-pull__stars" aria-hidden="true">★★★★★</div>
-            <div class="review-pull__count">1,243 verified reviews</div>
-          </div>
-          <div class="review-pull__bars">
-            <div class="bar-row"><span class="num">5</span><span class="track"><span class="fill" style="width:82%"></span></span><span class="pct">82%</span></div>
-            <div class="bar-row"><span class="num">4</span><span class="track"><span class="fill" style="width:11%"></span></span><span class="pct">11%</span></div>
-            <div class="bar-row"><span class="num">3</span><span class="track"><span class="fill" style="width:4%"></span></span><span class="pct">4%</span></div>
-            <div class="bar-row"><span class="num">2</span><span class="track"><span class="fill" style="width:2%"></span></span><span class="pct">2%</span></div>
-            <div class="bar-row"><span class="num">1</span><span class="track"><span class="fill" style="width:1%"></span></span><span class="pct">1%</span></div>
-          </div>
+        <div class="review-pull__bars">
+          <div class="bar-row"><span class="num">5</span><span class="track"><span class="fill" style="width:82%"></span></span><span class="pct">82%</span></div>
+          <div class="bar-row"><span class="num">4</span><span class="track"><span class="fill" style="width:11%"></span></span><span class="pct">11%</span></div>
+          <div class="bar-row"><span class="num">3</span><span class="track"><span class="fill" style="width:4%"></span></span><span class="pct">4%</span></div>
+          <div class="bar-row"><span class="num">2</span><span class="track"><span class="fill" style="width:2%"></span></span><span class="pct">2%</span></div>
+          <div class="bar-row"><span class="num">1</span><span class="track"><span class="fill" style="width:1%"></span></span><span class="pct">1%</span></div>
         </div>
-
-        <div class="card reveal" data-delay="3" style="margin-top:var(--space-10);">
-          <div class="row-between" style="align-items:flex-start;">
-            <div>
-              <p class="text-accent" aria-label="5 stars">★★★★★</p>
-              <p class="h4" style="margin-top:6px;">Way better than the Sur-Ron my friend has.</p>
-              <p class="body" style="margin-top:var(--space-3); max-width:50ch;">Got the Dirt 01 with the EBMX battery and Galfer brakes. Hits 38 like nothing and the wrap looks crazy. Customer service answered in 2 hours.</p>
-              <p class="caption" style="margin-top:var(--space-3);"><span class="text-primary">Jake B.</span> &middot; 14 &middot; San Diego &middot; <span class="text-accent">✓ Verified Dirt 01 + Satin black PVD-look</span></p>
-            </div>
-          </div>
-        </div>
-
-        <div class="reveal" data-delay="4" style="margin-top:var(--space-8);">
-          <a href="reviews.html" class="btn btn--secondary btn--lg">Read all 1,243 reviews<span class="btn__arrow">→</span></a>
-        </div>
+      </div>
+      <div style="margin-top:var(--space-8);">
+        <a href="reviews.html" class="btn btn--secondary btn--lg">Read all reviews<span class="btn__arrow">→</span></a>
       </div>
     </section>
 
     <hr class="section-divider">
 
-    <!-- ===== WISHLIST CALL-TO-ACTION ===== -->
-    <section class="section section--lg" aria-labelledby="wishlist-title">
-      <div class="container-base">
-        <div class="reveal">
-          <p class="eyebrow section-label">For the asking</p>
-        </div>
-        <h2 id="wishlist-title" class="h1 reveal" data-delay="1" style="margin-top:var(--space-3);">Save your dream build. Send it to a parent.</h2>
-        <p class="body-lg reveal" data-delay="2" style="margin-top:var(--space-3); max-width:52ch;">Build the bike you actually want. Save it. Send it to mom or dad in one tap &mdash; iMessage, email, link, QR. They see the exact build and your note, and can approve in a single tap. Split the cost together if you want.</p>
-        <div class="reveal" data-delay="3" style="margin-top:var(--space-6);">
-          <a href="wishlist.html" class="btn btn--primary btn--lg">Open the wishlist<span class="btn__arrow">→</span></a>
-        </div>
+    <!-- ===== WISHLIST CTA ===== -->
+    <section class="section section--lg container-base" aria-labelledby="wishlist-title">
+      <p class="eyebrow section-label">For the asking</p>
+      <h2 id="wishlist-title" class="h1" style="margin-top:var(--space-3);">Save your dream build. Send it to a parent.</h2>
+      <p class="body-lg" style="margin-top:var(--space-3); max-width:52ch;">Build the bike you actually want. Save it. Send it to mom or dad in one tap — iMessage, email, link, QR. They see the exact build and your note, and can approve in a single tap.</p>
+      <div style="margin-top:var(--space-6);">
+        <a href="wishlist.html" class="btn btn--primary btn--lg">Open the wishlist<span class="btn__arrow">→</span></a>
       </div>
     </section>
 
@@ -242,20 +222,21 @@
       <div class="site-footer__grid">
         <div>
           <p class="wordmark" style="margin-bottom:var(--space-3);">maxrides</p>
-          <p class="body-sm" style="max-width:36ch;">Customizable electric dirt bikes and cruisers, built around what teens actually ride.</p>
+          <p class="body-sm" style="max-width:36ch;">The curated dropship store for real-world teen e-bikes.</p>
         </div>
         <div class="site-footer__col">
           <h4>Shop</h4>
-          <a href="bike.html?slug=dirt-01">The Dirt 01</a>
-          <a href="bike.html?slug=cruiser">The Cruiser</a>
-          <a href="bike.html?slug=starter">The Starter</a>
-          <a href="build.html">Build your own</a>
-        </div>
-        <div class="site-footer__col">
-          <h4>Community</h4>
+          <a href="build.html">Open the builder</a>
           <a href="rides.html">Rides feed</a>
           <a href="reviews.html">Reviews</a>
           <a href="wishlist.html">Wishlist</a>
+        </div>
+        <div class="site-footer__col">
+          <h4>Brands</h4>
+          <a href="build.html?bike=sur-ron-light-bee-x">Sur-Ron</a>
+          <a href="build.html?bike=talaria-sting-mx4">Talaria</a>
+          <a href="build.html?bike=super73-rx">Super73</a>
+          <a href="build.html?bike=stark-varg">Stark Future</a>
         </div>
         <div class="site-footer__col">
           <h4>Help</h4>
@@ -274,5 +255,61 @@
   <script src="assets/js/data.js"></script>
   <script src="assets/js/bikes.js"></script>
   <script src="assets/js/app.js"></script>
+  <script>
+  (function () {
+    'use strict';
+    var DATA = window.MAXRIDES_DATA;
+    var host = document.getElementById('bike-host');
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, function (c) {
+        return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c];
+      });
+    }
+
+    function fmt(n) { return '$' + n.toLocaleString('en-US'); }
+
+    function tierLabel(tier) {
+      return { budget: 'Budget', mid: 'Mid', premium: 'Premium', halo: 'Halo' }[tier] || '';
+    }
+
+    function bikeCardHtml(bike) {
+      var slug = encodeURIComponent(bike.slug);
+      return [
+        '<a href="bike.html?slug=' + slug + '" class="bike-card">',
+          '<div class="bike-card__media">',
+            window.bikeImage(bike.slug, '#FF5A1F'),
+            '<span class="bike-card__tier">' + tierLabel(bike.tier) + '</span>',
+          '</div>',
+          '<div class="bike-card__body">',
+            '<p class="bike-card__brand">' + escapeHtml(bike.brand) + '</p>',
+            '<h3 class="bike-card__name">' + escapeHtml(bike.name) + '</h3>',
+            '<p class="bike-card__tagline">' + escapeHtml(bike.tagline) + '</p>',
+            '<div class="bike-card__footer">',
+              '<span class="bike-card__price">' + fmt(bike.basePrice) + '</span>',
+              '<span class="bike-card__cta">Build</span>',
+            '</div>',
+          '</div>',
+        '</a>'
+      ].join('');
+    }
+
+    DATA.BIKE_CATEGORIES.forEach(function (cat) {
+      var bikes = DATA.bikesByCategory(cat.id);
+      if (!bikes.length) return;
+      var section = document.createElement('section');
+      section.className = 'bike-cat';
+      section.innerHTML =
+        '<div class="bike-cat__head">' +
+          '<p class="eyebrow">' + escapeHtml(cat.label) + '</p>' +
+          '<h2 class="h2">' + escapeHtml(cat.tagline) + '</h2>' +
+        '</div>' +
+        '<div class="bike-grid">' +
+          bikes.map(bikeCardHtml).join('') +
+        '</div>';
+      host.appendChild(section);
+    });
+  })();
+  </script>
 </body>
 </html>

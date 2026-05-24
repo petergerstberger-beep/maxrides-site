@@ -195,7 +195,7 @@
       var itemTotal = item.lineItems.reduce(function (s, li) { return s + li.price; }, 0);
 
       div.innerHTML =
-        '<div class="cart-item__thumb">' + window.BIKE_SVG[item.bike](item.colorHex || '#FF5A1F') + '</div>' +
+        '<div class="cart-item__thumb">' + window.bikeImage(item.bike, item.colorHex || '#FF5A1F') + '</div>' +
         '<div>' +
           '<div class="cart-item__label">' + escapeHtml(item.bikeName.replace(/^The /, '')) + '</div>' +
           '<div class="cart-item__name">' + escapeHtml(item.bikeName) + '</div>' +

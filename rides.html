@@ -359,7 +359,7 @@
       article.className = 'ride';
       article.dataset.rideId = r.id;
       article.innerHTML =
-        '<div class="ride__stage">' + window.BIKE_SVG[r.bike](r.finish) + '</div>' +
+        '<div class="ride__stage">' + window.bikeImage(r.bike, r.finish) + '</div>' +
         '<span class="badge ride__badge">' + escapeHtml(r.kind) + '</span>' +
         '<div class="ride__right">' +
           '<div class="stack"><div class="icon avatar">' + r.handle.charAt(1).toUpperCase() + '<div class="plus">+</div></div></div>' +

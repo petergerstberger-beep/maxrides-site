@@ -1,14 +1,15 @@
 /* ============================================
    MaxRides — Builder page (configurator)
-   Reads MAXRIDES_DATA; renders all categories from the data layer.
-   Manages selections state, live price, live bike preview color.
-   Persists selections to localStorage and writes to cart/wishlist.
+   Reads MAXRIDES_DATA; renders categories from the data layer.
+   Tier-filters mods so cheaper bikes hide expensive options.
+   Renders bike pills dynamically from DATA.BIKES.
    ============================================ */
 
 (function () {
   'use strict';
 
   var DATA = window.MAXRIDES_DATA;
+  var TIER_RANK = DATA.TIER_RANK;
   var $ = function (sel) { return document.querySelector(sel); };
   var $$ = function (sel) { return document.querySelectorAll(sel); };
   function $el(tag, attrs, html) {
@@ -24,14 +25,14 @@
   function fmt(n) { return '$' + n.toLocaleString('en-US'); }
 
   // ---------- State ----------
+  var DEFAULT_SLUG = (DATA.BIKES[0] && DATA.BIKES[0].slug) || 'sur-ron-light-bee-x';
   var state = {
-    bikeSlug: 'dirt-01',
-    frameColor: DATA.FRAME_COLORS[0],   // gloss orange
+    bikeSlug: DEFAULT_SLUG,
+    frameColor: DATA.FRAME_COLORS[0],
     plateNumber: '73',
-    selections: {}                       // categoryId -> optionId
+    selections: {}
   };
 
-  // Read ?bike= query param
   var params = new URLSearchParams(window.location.search);
   var qBike = params.get('bike');
   if (qBike && DATA.findBike(qBike)) state.bikeSlug = qBike;
@@ -41,7 +42,7 @@
     state.selections[cat.id] = cat.options[0].id;
   });
 
-  // Try to load a preload payload from ?preload= (used by Remix → Builder handoff)
+  // Preload payload from ?preload= (Remix → Builder handoff)
   var qPreload = params.get('preload');
   if (qPreload) {
     try {
@@ -63,10 +64,17 @@
     return cat.options.find(function (o) { return o.id === optId; });
   }
 
+  // Filter category options by:
+  //   1. applicableBikes (if set, hard allow-list)
+  //   2. tier (option's tier rank must be <= bike's tier rank)
   function applicableOptions(cat) {
+    var bike = DATA.findBike(state.bikeSlug);
+    if (!bike) return cat.options;
+    var bikeRank = TIER_RANK[bike.tier] || 2;
     return cat.options.filter(function (o) {
-      if (!o.applicableBikes) return true;
-      return o.applicableBikes.indexOf(state.bikeSlug) !== -1;
+      if (o.applicableBikes && o.applicableBikes.indexOf(state.bikeSlug) === -1) return false;
+      var optRank = TIER_RANK[o.tier || 'budget'] || 1;
+      return optRank <= bikeRank;
     });
   }
 
@@ -90,7 +98,7 @@
       colorHex: state.frameColor.hex,
       plate: state.plateNumber,
       selections: {},
-      lineItems: [{ label: bike.name + ' frame', price: bike.basePrice }],
+      lineItems: [{ label: bike.name, price: bike.basePrice }],
       total: 0
     };
     if (state.frameColor.priceDelta) {
@@ -138,8 +146,16 @@
   // ---------- Render: a category section ----------
   function renderCategory(cat) {
     var opts = applicableOptions(cat);
-    var section = $el('section', { 'class': 'builder-section', id: 'cat-' + cat.id });
+    if (!opts.length) return null;
+
+    // If currently-selected option got filtered out, fall back to first
+    var currentId = state.selections[cat.id];
+    if (!opts.find(function (o) { return o.id === currentId; })) {
+      state.selections[cat.id] = opts[0].id;
+    }
     var selOpt = getOption(cat.id, state.selections[cat.id]) || opts[0];
+
+    var section = $el('section', { 'class': 'builder-section', id: 'cat-' + cat.id });
     section.innerHTML =
       '<div class="builder-section__head">' +
         '<p class="eyebrow">' + cat.number + ' &middot; ' + cat.title + '</p>' +
@@ -148,13 +164,11 @@
       '<p class="builder-section__blurb">' + cat.blurb + '</p>' +
       '<div class="option-grid" data-grid-for="' + cat.id + '"></div>';
 
-    // Build the option grid
     var grid = section.querySelector('[data-grid-for="' + cat.id + '"]');
     opts.forEach(function (opt) {
       grid.appendChild(renderOptionCard(cat, opt));
     });
 
-    // For the plate category, add the number input
     if (cat.id === 'plate') {
       var input = $el('div', { 'class': 'plate-input' });
       input.innerHTML =
@@ -202,11 +216,9 @@
 
     function activate() {
       state.selections[cat.id] = opt.id;
-      // Toggle visual selection in this category's grid
       var grid = card.parentElement;
       grid.querySelectorAll('.option').forEach(function (c) { c.classList.remove('is-selected'); });
       card.classList.add('is-selected');
-      // Update the selected-name badge
       var badge = document.querySelector('[data-selected-for="' + cat.id + '"]');
       if (badge) badge.textContent = opt.name;
       renderTotal();
@@ -223,7 +235,8 @@
     var host = $('#categories-host');
     host.innerHTML = '';
     DATA.COMPONENT_CATEGORIES.forEach(function (cat) {
-      host.appendChild(renderCategory(cat));
+      var section = renderCategory(cat);
+      if (section) host.appendChild(section);
     });
   }
 
@@ -232,8 +245,8 @@
     var stage = $('#builder-stage');
     stage.setAttribute('data-bike', state.bikeSlug);
     stage.setAttribute('data-accent', state.frameColor.hex);
-    if (window.BIKE_SVG && window.BIKE_SVG[state.bikeSlug]) {
-      stage.innerHTML = window.BIKE_SVG[state.bikeSlug](state.frameColor.hex);
+    if (window.bikeImage) {
+      stage.innerHTML = window.bikeImage(state.bikeSlug, state.frameColor.hex);
     }
     var bike = DATA.findBike(state.bikeSlug);
     $('#builder-bike-label').textContent = 'Building · ' + bike.name;
@@ -245,32 +258,29 @@
     $('#footer-total').textContent = fmt(t);
   }
 
-  // ---------- Bike pills ----------
-  function setupBikePills() {
-    var pills = $$('[data-bike-pill]');
-    pills.forEach(function (p) {
-      p.addEventListener('click', function () {
-        var slug = p.getAttribute('data-bike-pill');
-        if (slug === state.bikeSlug) return;
-        state.bikeSlug = slug;
-        pills.forEach(function (q) { q.classList.toggle('chip--active', q === p); });
-        renderPreview();
-        // Reset selections that are no longer applicable
-        DATA.COMPONENT_CATEGORIES.forEach(function (cat) {
-          var opts = applicableOptions(cat);
-          var current = state.selections[cat.id];
-          if (!opts.find(function (o) { return o.id === current; })) {
-            state.selections[cat.id] = opts[0].id;
-          }
+  // ---------- Bike pills (rendered dynamically from DATA.BIKES) ---
+  function renderBikePills() {
+    var row = $('#bike-pill-row');
+    if (!row) return;
+    row.innerHTML = '';
+    DATA.BIKES.forEach(function (b) {
+      var btn = $el('button', {
+        type: 'button',
+        'class': 'chip' + (b.slug === state.bikeSlug ? ' chip--active' : ''),
+        'data-bike-pill': b.slug
+      }, escapeHtml(b.name));
+      btn.addEventListener('click', function () {
+        if (b.slug === state.bikeSlug) return;
+        state.bikeSlug = b.slug;
+        row.querySelectorAll('[data-bike-pill]').forEach(function (q) {
+          q.classList.toggle('chip--active', q === btn);
         });
+        renderPreview();
         renderAllCategories();
         renderTotal();
         persist();
       });
-    });
-    // Reflect initial selection
-    pills.forEach(function (p) {
-      p.classList.toggle('chip--active', p.getAttribute('data-bike-pill') === state.bikeSlug);
+      row.appendChild(btn);
     });
   }
 
@@ -287,7 +297,7 @@
   }
 
   function hydrateFromStorage() {
-    if (qPreload || qBike) return; // URL takes priority
+    if (qPreload || qBike) return;
     try {
       var raw = localStorage.getItem('maxrides.builder');
       if (!raw) return;
@@ -312,7 +322,7 @@
     var summary = buildSummary();
     summary.id = 'wl_' + Date.now();
     summary.savedAt = new Date().toISOString();
-    summary.title = 'My ' + summary.bikeName.replace(/^The /, '') + ' build';
+    summary.title = 'My ' + summary.bikeName + ' build';
     var raw = localStorage.getItem('maxrides.wishlist');
     var list = raw ? JSON.parse(raw) : [];
     list.unshift(summary);
@@ -358,7 +368,7 @@
   // ---------- Init ----------
   hydrateFromStorage();
   document.addEventListener('DOMContentLoaded', function () {
-    setupBikePills();
+    renderBikePills();
     renderPreview();
     renderColorRow();
     $('#selected-color').textContent = state.frameColor.name;

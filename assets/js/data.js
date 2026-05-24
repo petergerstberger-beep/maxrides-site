@@ -1,73 +1,311 @@
 /* ============================================
    MaxRides — Product & content data
    Single source of truth for bikes, builder components,
-   mock rides feed, and reviews. All accessory picks
-   refreshed against 2025–2026 community consensus.
+   mock rides feed, and reviews. Now a curated dropship store
+   for real-world teen e-bike brands.
    ============================================ */
 
 (function () {
   'use strict';
 
   // ----- Bikes ----------------------------------------------------
+  //
+  // Each bike has a `tier` (budget|mid|premium|halo) that gates which
+  // builder mods are shown — cheaper bikes hide the expensive mods so
+  // buyers aren't overwhelmed. The `silhouette` field maps the bike
+  // to one of three placeholder SVG shapes until real product
+  // photography is wired in (photoUrl).
+  // Prices verified against 2025–2026 real-world MSRP.
 
   var BIKES = [
+    // ===== DIRT =====
     {
-      slug: 'dirt-01',
-      label: '01 · DIRT',
-      name: 'The Dirt 01',
-      tagline: 'Built for the trail.',
-      heroCopy: 'Sur-Ron silhouette. MaxRides finish. Built to disappear into the dirt and reappear on every feed.',
-      basePrice: 2499,
+      slug: 'sur-ron-light-bee-x',
+      brand: 'Sur-Ron',
+      name: 'Sur-Ron Light Bee X',
+      category: 'dirt',
+      tier: 'mid',
+      silhouette: 'dirt',
+      photoUrl: null,
+      tagline: 'The OG teen rocket.',
+      heroCopy: '8 kW peak. 47 mph top speed. Samsung 50S cells. The bike every Sur-Ron rival is chasing.',
+      basePrice: 4500,
       rating: 4.9,
-      reviewCount: 487,
+      reviewCount: 1247,
       specs: {
-        topSpeed: '38 mph',
-        range: '40 mi (stock)',
-        motor: '6,000 W mid-drive',
-        weight: '110 lb',
-        battery: '60V 32Ah Li-ion',
-        suspension: 'FastAce-tuned'
+        topSpeed: '47 mph',
+        range: '60 mi',
+        motor: '6,000 W mid-drive (8 kW peak)',
+        weight: '125 lb',
+        battery: '60V 40Ah Samsung 50S',
+        suspension: 'Inverted USD fork'
       }
     },
     {
-      slug: 'cruiser',
-      label: '02 · CRUISER',
-      name: 'The Cruiser',
-      tagline: 'Made for the streets.',
-      heroCopy: 'Long, low, banana-seated. Made to roll up to school and have everyone ask what it is.',
-      basePrice: 1899,
+      slug: 'sur-ron-ultra-bee',
+      brand: 'Sur-Ron',
+      name: 'Sur-Ron Ultra Bee',
+      category: 'dirt',
+      tier: 'premium',
+      silhouette: 'dirt',
+      photoUrl: null,
+      tagline: 'Bigger battery. Bigger send.',
+      heroCopy: '12.5 kW peak motor. Fox suspension. Built for riders who outgrew the Light Bee in a month.',
+      basePrice: 6500,
+      rating: 4.9,
+      reviewCount: 612,
+      specs: {
+        topSpeed: '56 mph',
+        range: '75 mi',
+        motor: '12.5 kW peak',
+        weight: '168 lb',
+        battery: '74V 55Ah',
+        suspension: 'KKE adjustable'
+      }
+    },
+    {
+      slug: 'talaria-sting-mx4',
+      brand: 'Talaria',
+      name: 'Talaria Sting MX4',
+      category: 'dirt',
+      tier: 'mid',
+      silhouette: 'dirt',
+      photoUrl: null,
+      tagline: 'More low-end torque than the Sur-Ron.',
+      heroCopy: 'The serious Sur-Ron rival. 60V/45Ah battery, FastAce-tuned suspension, race-ready geometry.',
+      basePrice: 4500,
       rating: 4.8,
-      reviewCount: 412,
+      reviewCount: 893,
+      specs: {
+        topSpeed: '50 mph',
+        range: '50 mi',
+        motor: '8,500 W peak',
+        weight: '113 lb',
+        battery: '60V 45Ah',
+        suspension: 'FastAce ALX13'
+      }
+    },
+    {
+      slug: 'stark-varg',
+      brand: 'Stark Future',
+      name: 'Stark VARG',
+      category: 'dirt',
+      tier: 'halo',
+      silhouette: 'dirt',
+      photoUrl: null,
+      tagline: 'The supercar of electric dirt bikes.',
+      heroCopy: '80 hp. Smartphone-as-dashboard. Carbon frame. Bike pros are racing professional motocross on it.',
+      basePrice: 13900,
+      rating: 5.0,
+      reviewCount: 142,
+      specs: {
+        topSpeed: '75 mph',
+        range: '6 hr enduro / 1 hr race',
+        motor: '80 hp (60 kW) peak',
+        weight: '240 lb',
+        battery: '360V 6.5 kWh',
+        suspension: 'KYB AOS factory race'
+      }
+    },
+    {
+      slug: 'etm-rtr-xl',
+      brand: 'Electro & Co',
+      name: 'ETM RTR XL',
+      category: 'dirt',
+      tier: 'premium',
+      silhouette: 'dirt',
+      photoUrl: null,
+      tagline: 'Ready to Rip. Flagship.',
+      heroCopy: '16,000 W max output. Hot-swap Samsung pack. 65+ mph top speed. Built in-house by Electro & Co.',
+      basePrice: 5500,
+      rating: 4.8,
+      reviewCount: 312,
+      specs: {
+        topSpeed: '65 mph',
+        range: '30–60 mi',
+        motor: '16,000 W max',
+        weight: '165 lb',
+        battery: '72V 35Ah Samsung (hot-swap)',
+        suspension: 'Tunable hydraulic'
+      }
+    },
+    {
+      slug: 'etm-rtr-sport',
+      brand: 'Electro & Co',
+      name: 'ETM RTR Sport',
+      category: 'dirt',
+      tier: 'mid',
+      silhouette: 'dirt',
+      photoUrl: null,
+      tagline: 'Newly engineered. Newly powered.',
+      heroCopy: '8,000 W peak. 55+ mph. 72V/25Ah battery. The evolution of the original ETM RTR.',
+      basePrice: 4000,
+      rating: 4.7,
+      reviewCount: 421,
+      specs: {
+        topSpeed: '55 mph',
+        range: '30 mi',
+        motor: '8,000 W peak',
+        weight: '145 lb',
+        battery: '72V 25Ah',
+        suspension: 'Hydraulic open-bath'
+      }
+    },
+    {
+      slug: 'etm-rtr-lite',
+      brand: 'Electro & Co',
+      name: 'ETM RTR Lite',
+      category: 'dirt',
+      tier: 'budget',
+      silhouette: 'starter',
+      photoUrl: null,
+      tagline: 'Ready to Rip — entry tier.',
+      heroCopy: 'Designed for teens and adults. 60V/20Ah battery, expandable to 72V/45Ah. Roomy cockpit, precision-tuned suspension.',
+      basePrice: 2500,
+      rating: 4.6,
+      reviewCount: 287,
+      specs: {
+        topSpeed: '40 mph',
+        range: '25 mi',
+        motor: '5,000 W peak',
+        weight: '120 lb',
+        battery: '60V 20Ah (expandable to 72V 45Ah)',
+        suspension: 'Tuned for confidence + control'
+      }
+    },
+    {
+      slug: 'rawrr-mantis',
+      brand: 'Rawrr',
+      name: 'Rawrr Mantis',
+      category: 'dirt',
+      tier: 'budget',
+      silhouette: 'dirt',
+      photoUrl: null,
+      tagline: 'A Sur-Ron rival for half the money.',
+      heroCopy: '5,000 W peak. 40 mph. 60V/32Ah pack. The best-spec\'d sub-$2,500 e-dirt bike on the market.',
+      basePrice: 2499,
+      rating: 4.5,
+      reviewCount: 502,
+      specs: {
+        topSpeed: '40 mph',
+        range: '40 mi',
+        motor: '5,000 W peak',
+        weight: '122 lb',
+        battery: '60V 32Ah',
+        suspension: 'Hydraulic USD'
+      }
+    },
+
+    // ===== STREET =====
+    {
+      slug: 'super73-rx',
+      brand: 'Super73',
+      name: 'Super73 RX',
+      category: 'street',
+      tier: 'mid',
+      silhouette: 'cruiser',
+      photoUrl: null,
+      tagline: 'The classic moped you grew up wanting.',
+      heroCopy: 'Full-size frame. Banana seat. Class-3 e-bike. The bike that started the Super73 cult.',
+      basePrice: 3800,
+      rating: 4.8,
+      reviewCount: 2104,
+      specs: {
+        topSpeed: '28 mph (assisted)',
+        range: '75 mi',
+        motor: '2,000 W peak',
+        weight: '84 lb',
+        battery: '48V 20Ah',
+        suspension: 'Front + rear shock'
+      }
+    },
+    {
+      slug: 'super73-zx',
+      brand: 'Super73',
+      name: 'Super73 ZX',
+      category: 'street',
+      tier: 'mid',
+      silhouette: 'cruiser',
+      photoUrl: null,
+      tagline: 'Sportier. Fastest stock Super73.',
+      heroCopy: 'Premium 4-mode controller. Hydraulic disc brakes. The Super73 for kids who actually want speed.',
+      basePrice: 4800,
+      rating: 4.8,
+      reviewCount: 894,
+      specs: {
+        topSpeed: '32 mph (Class 4 unlock)',
+        range: '60 mi',
+        motor: '2,500 W peak',
+        weight: '85 lb',
+        battery: '52V 20Ah',
+        suspension: 'Dual telescopic + rear'
+      }
+    },
+    {
+      slug: 'onyx-rcr',
+      brand: 'Onyx Motorbikes',
+      name: 'Onyx RCR',
+      category: 'street',
+      tier: 'mid',
+      silhouette: 'cruiser',
+      photoUrl: null,
+      tagline: '60 mph moped. Street-legal.',
+      heroCopy: 'Hits 60 mph in 6 sec. Pedals included. Legal as a moped in 49 states. Bay-Area-built.',
+      basePrice: 3795,
+      rating: 4.7,
+      reviewCount: 1208,
+      specs: {
+        topSpeed: '60 mph',
+        range: '50 mi',
+        motor: '5,400 W peak',
+        weight: '155 lb',
+        battery: '72V 35Ah',
+        suspension: 'Inverted dual fork'
+      }
+    },
+
+    // ===== COMMUTER =====
+    {
+      slug: 'macfox-x2',
+      brand: 'MacFox',
+      name: 'MacFox X2',
+      category: 'commuter',
+      tier: 'budget',
+      silhouette: 'starter',
+      photoUrl: null,
+      tagline: 'Fat-tire commuter. TikTok-famous.',
+      heroCopy: 'Dual-battery option for 90-mile range. 20"×4" fat tires. The teen pick that doesn\'t need a dirt track.',
+      basePrice: 2099,
+      rating: 4.6,
+      reviewCount: 3412,
       specs: {
         topSpeed: '28 mph',
-        range: '45 mi (stock)',
-        motor: '1,200 W rear hub',
-        weight: '82 lb',
-        battery: '52V 20Ah Li-ion',
-        suspension: 'Front telescopic'
-      }
-    },
-    {
-      slug: 'starter',
-      label: '03 · STARTER',
-      name: 'The Starter',
-      tagline: 'Every kid’s first ride.',
-      heroCopy: 'Smaller frame, lower top speed, same MaxRides DNA. The bike a younger sibling actually gets to keep.',
-      basePrice: 999,
-      rating: 4.7,
-      reviewCount: 344,
-      specs: {
-        topSpeed: '20 mph',
-        range: '30 mi (stock)',
-        motor: '500 W rear hub',
-        weight: '54 lb',
-        battery: '48V 14Ah Li-ion',
-        suspension: 'Front fork only'
+        range: '45 mi (90 mi w/ dual)',
+        motor: '750 W (peak 1,500 W)',
+        weight: '78 lb',
+        battery: '48V 20Ah (dual optional)',
+        suspension: 'Front fork + fat tires'
       }
     }
   ];
 
-  // ----- Frame colors (used by Builder #01) -----------------------
+  // ----- Bike categories (used by home page grid) -----------------
+
+  var BIKE_CATEGORIES = [
+    { id: 'dirt',     label: 'Dirt rockets',     tagline: 'Built for the trail and the air.' },
+    { id: 'street',   label: 'Street cruisers',  tagline: 'Made for the road and the school drop-off.' },
+    { id: 'commuter', label: 'Commuter',         tagline: 'Fat-tire, long-range, fully practical.' }
+  ];
+
+  // ----- Tier ranks (used by Builder mod-filter) ------------------
+  //
+  // The Builder hides options where TIER_RANK[opt.tier] > TIER_RANK[bike.tier].
+  // So a $2,500 bike never shows $1,500 mods, but a $13,900 Stark VARG
+  // sees the whole catalog.
+
+  var TIER_RANK = { budget: 1, mid: 2, premium: 3, halo: 4 };
+
+  // ----- Frame colors (used by Builder as wrap option) ------------
 
   var FRAME_COLORS = [
     { id: 'gloss-orange', name: 'Gloss orange', hex: '#FF5A1F', priceDelta: 0 },
@@ -80,51 +318,52 @@
 
   // ----- Builder component categories -----------------------------
   //
-  // Each option carries a `specs` object — a spec sheet rendered inline
-  // in the option card to communicate the "this is real gear" quality bar.
-  // Prices in USD. `applicableBikes` filters category options per bike.
+  // Each option has a `tier`:
+  //   - budget   ($0–$250 range, visible on every bike)
+  //   - mid      ($250–$700, visible on mid/premium/halo bikes)
+  //   - premium  ($700–$1,900, visible on premium/halo only)
+  //   - halo     ($1,900+, visible only on Stark VARG-class bikes)
+  //
+  // `applicableBikes` is an optional explicit allow-list (overrides tier).
+  // Prices verified against real 2025–2026 MSRP.
 
   var COMPONENT_CATEGORIES = [
-    // 01 · Frame color is handled separately (FRAME_COLORS) but kept in count.
     {
       id: 'finish',
       number: '02',
       title: 'Finish',
-      blurb: 'Premium full-bike treatments that change everything.',
+      blurb: 'Premium full-bike treatments.',
       options: [
-        { id: 'gloss-standard', name: 'Standard gloss', brand: 'MaxRides',
-          priceDelta: 0, summary: 'Factory clear coat over your frame color.',
+        { id: 'gloss-standard', name: 'Standard gloss', brand: 'MaxRides', tier: 'budget',
+          priceDelta: 0, summary: 'Factory clear coat over the frame color.',
           specs: { finish: 'PPG gloss clear', uv: 'UV-stable', layers: '3-coat base + clear', warranty: '2 yr color' } },
-        { id: 'matte-clear', name: 'Matte clear', brand: 'MaxRides',
+        { id: 'matte-clear', name: 'Matte clear', brand: 'MaxRides', tier: 'mid',
           priceDelta: 280, summary: 'Stealth flat finish, very Sur-Ron tuner.',
           specs: { finish: 'PPG matte clear', sheen: '15% gloss', layers: '3-coat + matte clear', warranty: '2 yr color' } },
-        { id: 'carbon-wrap', name: 'Forged carbon wrap', brand: 'REV797',
-          priceDelta: 680, summary: 'F1 / supercar carbon texture, pre-cut per panel.',
-          specs: { material: '3M 2080 carbon vinyl', cut: 'Pre-cut templates', install: 'Heat-bonded', removal: 'Peel-clean to 5 yr' } },
-        { id: 'color-shift', name: 'Color-shift chameleon', brand: 'Inozetek',
-          priceDelta: 1200, summary: 'Shifts color through the spectrum as you ride.',
-          specs: { material: 'Inozetek SuperGloss CR', shift: 'Magenta → teal → gold', install: 'Pro-shop application', removal: 'Peel-clean to 5 yr' } },
-        { id: 'ecd-dazzle', name: 'Dazzle color-shift kit', brand: 'ECD Customs',
-          priceDelta: 450, summary: 'ECD’s signature dazzle wrap kit for Talaria / Sur-Ron plastics.',
-          specs: { coverage: 'Plastics only', lead: '3–5 business days', release: 'Air-release adhesive', warranty: '1 yr peel' } },
-        { id: 'satin-black-pvd', name: 'Satin black "PVD-look"', brand: 'Avery Dennison',
+        { id: 'satin-black-pvd', name: 'Satin black PVD-look', brand: 'Avery Dennison', tier: 'mid',
           priceDelta: 520, summary: 'Deep mirror-black wrap. Like the bike was poured.',
-          specs: { material: 'Avery SW900 satin black', look: 'PVD-mimic', install: 'Heat-bonded', warranty: '3 yr' } }
+          specs: { material: 'Avery SW900 satin black', look: 'PVD-mimic', install: 'Heat-bonded', warranty: '3 yr' } },
+        { id: 'carbon-wrap', name: 'Forged carbon wrap', brand: 'REV797', tier: 'mid',
+          priceDelta: 680, summary: 'F1 / supercar carbon texture. Pre-cut per panel.',
+          specs: { material: '3M 2080 carbon vinyl', cut: 'Pre-cut templates', install: 'Heat-bonded', removal: 'Peel-clean to 5 yr' } },
+        { id: 'color-shift', name: 'Color-shift chameleon', brand: 'Inozetek', tier: 'premium',
+          priceDelta: 1200, summary: 'Shifts color through the spectrum as you ride.',
+          specs: { material: 'Inozetek SuperGloss CR', shift: 'Magenta → teal → gold', install: 'Pro-shop application', removal: 'Peel-clean to 5 yr' } }
       ]
     },
     {
       id: 'wheels',
       number: '03',
       title: 'Wheels',
-      blurb: 'Spoked sets that take real abuse and look the part.',
+      blurb: 'Spoked sets built for real abuse.',
       options: [
-        { id: 'stock-18', name: 'Stock 18"', brand: 'MaxRides',
-          priceDelta: 0, summary: 'Aluminum rim, sealed-bearing hub.',
-          specs: { rim: 'Aluminum', hub: 'Sealed bearing', spokes: '32ct steel', weight: '11.4 lb (set)' } },
-        { id: 'warp9-1619', name: 'Warp 9 Racing 16/19 anodized', brand: 'Warp 9',
-          priceDelta: 320, summary: 'The aftermarket gold standard for Sur-Ron and Talaria.',
+        { id: 'stock-wheels', name: 'Stock', brand: 'OEM', tier: 'budget',
+          priceDelta: 0, summary: 'Factory wheelset.',
+          specs: { rim: 'Aluminum', hub: 'Sealed bearing', spokes: '32ct steel' } },
+        { id: 'warp9-1619', name: 'Warp 9 Racing 16/19 anodized', brand: 'Warp 9', tier: 'mid',
+          priceDelta: 320, summary: 'Aftermarket gold standard for Sur-Ron and Talaria.',
           specs: { rim: '7000-series anodized aluminum', hub: '7075-T6 CNC, sealed bearings', spokes: '36ct stainless, factory-laced', weight: '9.2 lb (set)' } },
-        { id: 'excel-kke', name: 'Excel × KKE 19/16 premium', brand: 'Excel + KKE',
+        { id: 'excel-kke', name: 'Excel × KKE 19/16 premium', brand: 'Excel + KKE', tier: 'premium',
           priceDelta: 540, summary: 'Takasago Japanese rims with CNC-anodized hubs.',
           specs: { rim: 'Takasago 7050-T6', hub: '6082-T6 CNC anodized', spokes: 'Blackened iron, hand-laced', weight: '8.8 lb (set)' } }
       ]
@@ -133,41 +372,45 @@
       id: 'tires',
       number: '04',
       title: 'Tires',
-      blurb: 'Picked for the surface you actually ride on.',
+      blurb: 'Picked for the surface you ride on.',
       options: [
-        { id: 'maxxis-maxxenduro', name: 'MaxxEnduro', brand: 'Maxxis',
-          priceDelta: 180, summary: 'Top-rated dirt all-rounder. Grippy + durable.',
-          specs: { use: 'Dirt / trail', tread: 'Intermediate knobby', compound: 'Soft + medium dual', dot: 'Off-road' } },
-        { id: 'pirelli-mx32', name: 'Scorpion MX32', brand: 'Pirelli',
-          priceDelta: 210, summary: 'Soft/intermediate race compound.',
-          specs: { use: 'Race / loose terrain', tread: 'Mid-soft knobby', dot: 'Off-road', life: 'Short, high grip' } },
-        { id: 'shinko-525', name: '525 Cheater', brand: 'Shinko',
-          priceDelta: 160, summary: 'DOT-legal hare-scramble favorite — trail + road.',
-          specs: { use: 'Hare scramble', tread: 'Aggressive knobby', dot: 'DOT-legal' } },
-        { id: 'shinko-sr241', name: 'SR241 trials', brand: 'Shinko',
-          priceDelta: 140, summary: 'The #1 hybrid pick. Trails + pavement.',
+        { id: 'stock-tires', name: 'Stock', brand: 'OEM', tier: 'budget',
+          priceDelta: 0, summary: 'Factory tires.', specs: { use: 'Mixed' } },
+        { id: 'shinko-sr241', name: 'SR241 trials', brand: 'Shinko', tier: 'budget',
+          priceDelta: 140, summary: 'Hybrid pick. Trails + pavement.',
           specs: { use: 'Hybrid', tread: 'Trials pattern', dot: 'DOT-legal' } },
-        { id: 'pirelli-mt60', name: 'MT 60 RS', brand: 'Pirelli',
+        { id: 'shinko-525', name: '525 Cheater', brand: 'Shinko', tier: 'budget',
+          priceDelta: 160, summary: 'DOT-legal hare-scramble favorite.',
+          specs: { use: 'Hare scramble', tread: 'Aggressive knobby', dot: 'DOT-legal' } },
+        { id: 'maxxis-maxxenduro', name: 'MaxxEnduro', brand: 'Maxxis', tier: 'mid',
+          priceDelta: 180, summary: 'Top-rated dirt all-rounder.',
+          specs: { use: 'Dirt / trail', tread: 'Intermediate knobby', compound: 'Soft + medium dual', dot: 'Off-road' } },
+        { id: 'pirelli-mt60', name: 'MT 60 RS', brand: 'Pirelli', tier: 'mid',
           priceDelta: 200, summary: 'Street-default for Super73 RX builds.',
-          specs: { use: 'Street / scrambler', tread: 'Dual-sport', dot: 'DOT-legal' } }
+          specs: { use: 'Street / scrambler', tread: 'Dual-sport', dot: 'DOT-legal' } },
+        { id: 'pirelli-mx32', name: 'Scorpion MX32', brand: 'Pirelli', tier: 'mid',
+          priceDelta: 210, summary: 'Soft/intermediate race compound.',
+          specs: { use: 'Race / loose terrain', tread: 'Mid-soft knobby', dot: 'Off-road' } }
       ]
     },
     {
       id: 'plate',
       number: '05',
       title: 'ODI Plate',
-      blurb: 'Your number, front and center. Customize the text.',
+      blurb: 'Your number, front and center.',
       options: [
-        { id: 'plate-orange', name: 'Orange plate', brand: 'ODI',
-          priceDelta: 45, summary: 'The signature MaxRides plate color.',
-          specs: { material: 'Impact-resistant polymer', mount: 'Universal triple-clamp', graphic: 'White vinyl overlay (custom #)', warranty: '1 yr' } },
-        { id: 'plate-white', name: 'White plate', brand: 'ODI',
+        { id: 'no-plate', name: 'No plate', brand: '—', tier: 'budget',
+          priceDelta: 0, summary: 'Run plateless.', specs: {} },
+        { id: 'plate-orange', name: 'Orange plate', brand: 'ODI', tier: 'budget',
+          priceDelta: 45, summary: 'Signature MaxRides orange.',
+          specs: { material: 'Impact-resistant polymer', mount: 'Universal triple-clamp', graphic: 'White vinyl overlay (custom #)' } },
+        { id: 'plate-white', name: 'White plate', brand: 'ODI', tier: 'budget',
           priceDelta: 45, summary: 'Classic MX look.',
           specs: { material: 'Impact-resistant polymer', mount: 'Universal triple-clamp', graphic: 'Black vinyl overlay (custom #)' } },
-        { id: 'plate-black', name: 'Black plate', brand: 'ODI',
+        { id: 'plate-black', name: 'Black plate', brand: 'ODI', tier: 'budget',
           priceDelta: 45, summary: 'Stealth.',
           specs: { material: 'Impact-resistant polymer', mount: 'Universal triple-clamp', graphic: 'White vinyl overlay (custom #)' } },
-        { id: 'plate-holo', name: 'Holographic overlay', brand: 'UXA',
+        { id: 'plate-holo', name: 'Holographic overlay', brand: 'UXA', tier: 'mid',
           priceDelta: 70, summary: 'ODI plate + UXA holographic-chrome graphic.',
           specs: { graphic: 'Holographic chrome vinyl', fade: 'UV-stable 3 yr', custom: 'Number + name field' } }
       ]
@@ -178,73 +421,73 @@
       title: 'Battery',
       blurb: 'The single mod that changes how the bike feels.',
       options: [
-        { id: 'stock-60v', name: 'Stock 60V 32Ah', brand: 'MaxRides',
-          priceDelta: 0, summary: 'Factory battery. Good for ~40 mi.',
-          specs: { voltage: '60V', capacity: '32Ah', range: '~40 mi mixed', charge: '4.5 hr', warranty: '2 yr' } },
-        { id: 'nexbat-72v-50ah', name: 'Nexbat 72V 50Ah', brand: 'Nexbat',
-          priceDelta: 1650, summary: 'Molicel P50B cells. The 2025 no-compromise pack.',
+        { id: 'stock-battery', name: 'Stock', brand: 'OEM', tier: 'budget',
+          priceDelta: 0, summary: 'Factory battery.', specs: { warranty: '2 yr' } },
+        { id: 'dual-pack', name: 'Dual-battery setup', brand: 'ChiBatterySystems', tier: 'premium',
+          priceDelta: 1295, summary: '~120 mi range. Two packs in parallel.',
+          specs: { range: '~120 mi', config: 'Parallel dual-pack', warranty: '2 yr' } },
+        { id: 'nexbat-72v-50ah', name: 'Nexbat 72V 50Ah', brand: 'Nexbat', tier: 'premium',
+          priceDelta: 1650, summary: 'Molicel P50B cells. The no-compromise pack.',
           specs: { cells: 'Molicel P50B', voltage: '72V', capacity: '50Ah', range: '~75 mi', charge: '4 hr @ 10A', bms: 'Smart 300A continuous', warranty: '3 yr' } },
-        { id: 'ebmx-72v-42ah', name: 'EBMX 72V 42Ah QS8', brand: 'EBMX',
-          priceDelta: 1890, summary: 'Race-tuned pack built to feed the X-9000 controller.',
-          specs: { cells: 'NMC pouch', voltage: '72V', capacity: '42Ah', range: '~70 mi', charge: '4 hr @ 10A', case: 'Potted stainless', warranty: '5 yr / 1000 cycles' } },
-        { id: 'dual-pack', name: 'Dual-battery setup', brand: 'ChiBatterySystems',
-          priceDelta: 1295, summary: '~120 mi range. Two packs run in parallel.',
-          specs: { range: '~120 mi', config: 'Parallel dual-pack', use: 'All-day rides', warranty: '2 yr' } }
+        { id: 'ebmx-72v-42ah', name: 'EBMX 72V 42Ah QS8', brand: 'EBMX', tier: 'premium',
+          priceDelta: 1890, summary: 'Race-tuned pack built to feed the X-9000.',
+          specs: { cells: 'NMC pouch', voltage: '72V', capacity: '42Ah', range: '~70 mi', charge: '4 hr @ 10A', case: 'Potted stainless', warranty: '5 yr' } }
       ]
     },
     {
       id: 'controller',
       number: '07',
       title: 'Controller',
-      blurb: 'How smart the throttle is. Big jump in feel.',
+      blurb: 'How smart the throttle is.',
       options: [
-        { id: 'stock-controller', name: 'Stock', brand: 'MaxRides',
+        { id: 'stock-controller', name: 'Stock', brand: 'OEM', tier: 'budget',
           priceDelta: 0, summary: 'Tuned for stock battery.',
-          specs: { peakAmps: '150A', voltage: '60V', control: 'Trapezoidal' } },
-        { id: 'ebmx-x9000', name: 'EBMX X-9000 V3', brand: 'EBMX',
+          specs: { peakAmps: '150A', control: 'Trapezoidal' } },
+        { id: 'handlworks-bac855', name: 'Handlworks BAC855', brand: 'Handlworks', tier: 'mid',
+          priceDelta: 1250, summary: 'Super73-specific. 1.1 kW → 2.9 kW / 37 mph.',
+          specs: { fitment: 'Super73 R / RX / S2', power: '2.9 kW peak', topSpeed: '37 mph', leadtime: '2–6 wk' },
+          applicableBikes: ['super73-rx', 'super73-zx'] },
+        { id: 'ebmx-x9000', name: 'EBMX X-9000 V3', brand: 'EBMX', tier: 'premium',
           priceDelta: 1420, summary: '2025 dominant choice. IMU + launch control.',
           specs: { peakAmps: '1,000A continuous / 1,600A burst', power: '60 kW peak', voltage: '60–96V', control: 'FOC + IMU', app: 'Bluetooth, 6 power modes', warranty: '2 yr' } },
-        { id: 'asi-bac8000', name: 'ASI BAC8000', brand: 'ASI',
+        { id: 'asi-bac8000', name: 'ASI BAC8000', brand: 'ASI', tier: 'premium',
           priceDelta: 1690, summary: 'Premium FOC tuning. Legacy favorite.',
-          specs: { peakAmps: '850A', power: '32 kW peak', voltage: '24–96V', control: 'FOC', tuning: 'ASI Bac software', warranty: '2 yr' } },
-        { id: 'handlworks-bac855', name: 'Handlworks BAC855 (Super73 only)', brand: 'Handlworks',
-          priceDelta: 1250, summary: 'Super73-specific. 1.1 kW / 31 mph → 2.9 kW / 37 mph.',
-          specs: { fitment: 'Super73 R / RX / S2', power: '2.9 kW peak', topSpeed: '37 mph', leadtime: '2–6 wk' },
-          applicableBikes: ['cruiser'] }
+          specs: { peakAmps: '850A', power: '32 kW peak', voltage: '24–96V', control: 'FOC', warranty: '2 yr' } }
       ]
     },
     {
       id: 'motor',
       number: '08',
       title: 'Motor',
-      blurb: 'Last upgrade. Only worth it after battery + controller.',
+      blurb: 'Last upgrade. Only after battery + controller.',
       options: [
-        { id: 'stock-motor', name: 'Stock', brand: 'MaxRides',
-          priceDelta: 0, summary: 'Factory motor.',
-          specs: { power: '6,000 W (Dirt) / 1,200 W (Cruiser)', cooling: 'Sealed' } },
-        { id: 'sotion-13kw', name: 'Sotion 13 kW IPM (LBX)', brand: 'Sotion',
+        { id: 'stock-motor', name: 'Stock', brand: 'OEM', tier: 'budget',
+          priceDelta: 0, summary: 'Factory motor.', specs: {} },
+        { id: 'sotion-13kw', name: 'Sotion 13 kW IPM', brand: 'Sotion', tier: 'premium',
           priceDelta: 1100, summary: 'Strong torque + thermal headroom.',
-          specs: { power: '13 kW peak', type: 'IPM brushless', fitment: 'Sur-Ron LBX' } },
-        { id: 'komoto-factory', name: 'KO Moto Factory-Spec', brand: 'KO Moto',
+          specs: { power: '13 kW peak', type: 'IPM brushless', fitment: 'Sur-Ron LBX' },
+          applicableBikes: ['sur-ron-light-bee-x', 'sur-ron-ultra-bee'] },
+        { id: 'komoto-factory', name: 'KO Moto Factory-Spec', brand: 'KO Moto', tier: 'premium',
           priceDelta: 1200, summary: 'Direct upgrade with stock mounting.',
-          specs: { power: '13 kW peak', mounting: 'Stock-fit', pairing: 'Recommended with BAC8000 / X-9000' } }
+          specs: { power: '13 kW peak', mounting: 'Stock-fit' },
+          applicableBikes: ['sur-ron-light-bee-x', 'sur-ron-ultra-bee', 'talaria-sting-mx4'] }
       ]
     },
     {
       id: 'fork',
       number: '09',
       title: 'Front fork',
-      blurb: 'Suspension upgrade transforms how the bike rides.',
+      blurb: 'Suspension transforms how the bike rides.',
       options: [
-        { id: 'stock-fork', name: 'Stock', brand: 'MaxRides',
+        { id: 'stock-fork', name: 'Stock', brand: 'OEM', tier: 'budget',
           priceDelta: 0, summary: 'OEM USD fork.',
           specs: { stanchion: '32 mm', travel: '180 mm' } },
-        { id: 'fastace-alx13rc', name: 'FastAce ALX13RC 2.0', brand: 'FastAce',
+        { id: 'fastace-alx13rc', name: 'FastAce ALX13RC 2.0', brand: 'FastAce', tier: 'premium',
           priceDelta: 820, summary: 'Runaway #1 fork in 2025. 37 mm stanchions.',
-          specs: { stanchion: '37 mm (largest in class)', travel: '200 mm', valving: 'Open-bath, coil + shim', springs: '50 / 60 / 70 lb by rider weight' } },
-        { id: 'ext-ferro', name: 'EXT Ferro Fork', brand: 'EXT',
+          specs: { stanchion: '37 mm', travel: '200 mm', valving: 'Open-bath, coil + shim', springs: '50 / 60 / 70 lb by rider weight' } },
+        { id: 'ext-ferro', name: 'EXT Ferro Fork', brand: 'EXT', tier: 'halo',
           priceDelta: 2500, summary: 'Race-tier. Dual-crown, HS3 air spring.',
-          specs: { spring: 'HS3 air', crown: 'Dual-crown', adjust: '3-way cartridge', use: 'Race / expert' } }
+          specs: { spring: 'HS3 air', crown: 'Dual-crown', adjust: '3-way cartridge' } }
       ]
     },
     {
@@ -253,38 +496,37 @@
       title: 'Rear shock',
       blurb: 'Match the spring rate to the rider.',
       options: [
-        { id: 'stock-shock', name: 'Stock', brand: 'MaxRides',
-          priceDelta: 0, summary: 'OEM rear shock with default spring.',
-          specs: { spring: '450 lb stock' } },
-        { id: 'fastace-rear', name: 'FastAce rear shock + matched spring', brand: 'FastAce',
-          priceDelta: 420, summary: 'Better hydraulic valving. Pick your spring rate.',
-          specs: { springs: '450 / 500 / 550 / 600 lb', valving: 'Hydraulic, custom shim', sizing: '500 ≥5 150 lb rider; 550 ≥5 175 lb; 600 ≥5 200 lb' } },
-        { id: 'luna-550-spring', name: 'Luna 550 lb spring kit', brand: 'Luna Cycle',
+        { id: 'stock-shock', name: 'Stock', brand: 'OEM', tier: 'budget',
+          priceDelta: 0, summary: 'OEM rear shock.', specs: { spring: '450 lb stock' } },
+        { id: 'luna-550-spring', name: 'Luna 550 lb spring kit', brand: 'Luna Cycle', tier: 'budget',
           priceDelta: 120, summary: 'Cheapest acceptable upgrade for adult riders.',
-          specs: { product: 'DNM 550 lb replacement spring', use: 'Stock DNM body' } },
-        { id: 'ohlins-ttx', name: 'Öhlins TTX custom', brand: 'Öhlins',
+          specs: { product: 'DNM 550 lb spring' } },
+        { id: 'fastace-rear', name: 'FastAce rear shock + matched spring', brand: 'FastAce', tier: 'mid',
+          priceDelta: 420, summary: 'Better hydraulic valving. Pick your spring.',
+          specs: { springs: '450 / 500 / 550 / 600 lb', valving: 'Hydraulic, custom shim' } },
+        { id: 'ohlins-ttx', name: 'Öhlins TTX custom', brand: 'Öhlins', tier: 'halo',
           priceDelta: 1250, summary: 'Race tier. Custom-built per rider.',
-          specs: { length: '10.5" eye-to-eye', spring: 'Per-rider weight', use: 'Race only' } }
+          specs: { length: '10.5" eye-to-eye', spring: 'Per-rider weight' } }
       ]
     },
     {
       id: 'seat',
       number: '11',
       title: 'Seat',
-      blurb: 'Most-requested cosmetic SKU on these bikes.',
+      blurb: 'Most-requested cosmetic SKU.',
       options: [
-        { id: 'stock-seat', name: 'Stock', brand: 'MaxRides', priceDelta: 0, summary: 'Factory.',
-          specs: { profile: 'OEM low' } },
-        { id: 'guts-gripper', name: 'Hardcore Gripper', brand: 'Guts Racing',
-          priceDelta: 260, summary: 'The gold standard. California-built since 1990.',
-          specs: { profile: 'Tall slim moto', cover: 'Custom ribbed gripper', colors: 'Top / sides / ribs configurable', lead: '7–14 days' } },
-        { id: 'ccw-mx-seat', name: 'MX seat (taller, slim)', brand: 'Charged Cycle Works',
+        { id: 'stock-seat', name: 'Stock', brand: 'OEM', tier: 'budget',
+          priceDelta: 0, summary: 'Factory.', specs: {} },
+        { id: 'kanebilt-leather', name: 'Brown leather banana', brand: 'Kanebilt', tier: 'mid',
+          priceDelta: 220, summary: 'Cafe-racer leather banana.',
+          specs: { profile: 'Banana', material: 'Hand-stitched brown leather' },
+          applicableBikes: ['super73-rx', 'super73-zx', 'onyx-rcr'] },
+        { id: 'ccw-mx-seat', name: 'MX seat (taller, slim)', brand: 'Charged Cycle Works', tier: 'mid',
           priceDelta: 240, summary: 'Taller, slimmer moto profile.',
           specs: { profile: 'Tall slim moto', material: 'Gripper top + smooth sides' } },
-        { id: 'kanebilt-leather', name: 'Brown leather banana (Super73)', brand: 'Kanebilt',
-          priceDelta: 220, summary: 'Cafe-racer leather banana for the Cruiser.',
-          specs: { profile: 'Banana', material: 'Hand-stitched brown leather', fitment: 'Super73 R / RX / S2' },
-          applicableBikes: ['cruiser'] }
+        { id: 'guts-gripper', name: 'Hardcore Gripper', brand: 'Guts Racing', tier: 'mid',
+          priceDelta: 260, summary: 'Gold standard. California-built since 1990.',
+          specs: { profile: 'Tall slim moto', cover: 'Custom ribbed gripper', colors: 'Top / sides / ribs configurable' } }
       ]
     },
     {
@@ -293,36 +535,36 @@
       title: 'Grips',
       blurb: 'Tiny upgrade, huge feel difference.',
       options: [
-        { id: 'stock-grips', name: 'Stock', brand: 'MaxRides', priceDelta: 0,
-          summary: 'OEM rubber.', specs: { type: 'Slip-on rubber' } },
-        { id: 'odi-rogue', name: 'Rogue lock-on', brand: 'ODI',
-          priceDelta: 25, summary: 'Top dirt pick. Diamond pattern.',
+        { id: 'stock-grips', name: 'Stock', brand: 'OEM', tier: 'budget',
+          priceDelta: 0, summary: 'OEM rubber.', specs: { type: 'Slip-on rubber' } },
+        { id: 'odi-rogue', name: 'Rogue lock-on', brand: 'ODI', tier: 'budget',
+          priceDelta: 25, summary: 'Top dirt pick.',
           specs: { type: 'Lock-on MX', compound: 'Soft', diameter: '120 mm' } },
-        { id: 'odi-emig', name: 'Emig Pro V2 lock-on', brand: 'ODI',
+        { id: 'odi-cush', name: 'Cush comfort', brand: 'ODI', tier: 'budget',
+          priceDelta: 28, summary: 'Comfort street pick.',
+          specs: { type: 'Lock-on cushioned', compound: 'Medium' } },
+        { id: 'odi-emig', name: 'Emig Pro V2 lock-on', brand: 'ODI', tier: 'budget',
           priceDelta: 30, summary: 'Race-derived. Softer compound.',
-          specs: { type: 'Lock-on race', compound: 'Extra soft' } },
-        { id: 'odi-cush', name: 'Cush comfort', brand: 'ODI',
-          priceDelta: 28, summary: 'Comfort street pick. Common Super73 swap.',
-          specs: { type: 'Lock-on cushioned', compound: 'Medium' } }
+          specs: { type: 'Lock-on race', compound: 'Extra soft' } }
       ]
     },
     {
       id: 'bars',
       number: '13',
       title: 'Handlebars',
-      blurb: 'The most-cited bar across every forum.',
+      blurb: 'Most-cited bar on every forum.',
       options: [
-        { id: 'stock-bars', name: 'Stock', brand: 'MaxRides', priceDelta: 0,
-          summary: 'OEM bars.', specs: { material: 'Aluminum', rise: 'Stock' } },
-        { id: 'protaper-a76', name: 'ProTaper A76 (3" rise)', brand: 'ProTaper',
-          priceDelta: 95, summary: 'The universal dirt pick.',
-          specs: { rise: '3"', width: '810 mm (cuttable to 740)', damping: 'Vibrocore foam' } },
-        { id: 'protaper-a50', name: 'ProTaper A50 (2" rise)', brand: 'ProTaper',
+        { id: 'stock-bars', name: 'Stock', brand: 'OEM', tier: 'budget',
+          priceDelta: 0, summary: 'OEM bars.', specs: { material: 'Aluminum' } },
+        { id: 'protaper-a50', name: 'ProTaper A50 (2" rise)', brand: 'ProTaper', tier: 'mid',
           priceDelta: 95, summary: 'Lower rise for compact riders.',
           specs: { rise: '2"', width: '810 mm (cuttable)' } },
-        { id: 'renthal-fatbar', name: 'Renthal Fatbar / Twinwall', brand: 'Renthal',
+        { id: 'protaper-a76', name: 'ProTaper A76 (3" rise)', brand: 'ProTaper', tier: 'mid',
+          priceDelta: 95, summary: 'Universal dirt pick.',
+          specs: { rise: '3"', width: '810 mm (cuttable to 740)', damping: 'Vibrocore foam' } },
+        { id: 'renthal-fatbar', name: 'Renthal Fatbar / Twinwall', brand: 'Renthal', tier: 'premium',
           priceDelta: 135, summary: 'Premium race choice.',
-          specs: { construction: '7050-T6 aluminum + steel stay', use: 'Pro race' } }
+          specs: { construction: '7050-T6 aluminum + steel stay' } }
       ]
     },
     {
@@ -331,18 +573,18 @@
       title: 'Brakes',
       blurb: 'Going fast is easy. Stopping fast is the upgrade.',
       options: [
-        { id: 'stock-brakes', name: 'Stock', brand: 'MaxRides', priceDelta: 0,
-          summary: 'OEM 2-piston caliper + 203 mm rotor.',
+        { id: 'stock-brakes', name: 'Stock', brand: 'OEM', tier: 'budget',
+          priceDelta: 0, summary: 'OEM 2-piston caliper.',
           specs: { caliper: '2-piston', rotor: '203 mm' } },
-        { id: 'galfer-wave', name: 'Galfer Wave 220 mm front rotor', brand: 'Galfer',
-          priceDelta: 120, summary: 'Best per-dollar upgrade. +20% stopping power.',
-          specs: { rotor: '220 mm wave', material: 'Stainless heat-treated', boost: '+20% stopping power vs stock', fit: 'Stock caliper + spacer' } },
-        { id: 'magura-mt5', name: 'Magura MT5 4-piston system', brand: 'Magura',
-          priceDelta: 640, summary: 'New 2025 best-value benchmark. 4-piston.',
-          specs: { caliper: '4-piston aluminum', lever: '2-finger', pads: 'Organic, pre-bled hoses', warranty: '2 yr' } },
-        { id: 'magura-mt7', name: 'Magura MT7 Pro', brand: 'Magura',
-          priceDelta: 1090, summary: 'Premium 1-finger HC lever. Defined bite point.',
-          specs: { caliper: '4-piston pro', lever: 'HC 1-finger', pads: 'Race compound', use: 'Heavy / fast riders' } }
+        { id: 'galfer-wave', name: 'Galfer Wave 220 mm rotor', brand: 'Galfer', tier: 'budget',
+          priceDelta: 120, summary: 'Best per-dollar brake upgrade.',
+          specs: { rotor: '220 mm wave', material: 'Stainless heat-treated', boost: '+20% stopping power vs stock' } },
+        { id: 'magura-mt5', name: 'Magura MT5 4-piston', brand: 'Magura', tier: 'mid',
+          priceDelta: 640, summary: '2025 best-value 4-piston system.',
+          specs: { caliper: '4-piston aluminum', lever: '2-finger', pads: 'Organic, pre-bled hoses' } },
+        { id: 'magura-mt7', name: 'Magura MT7 Pro', brand: 'Magura', tier: 'premium',
+          priceDelta: 1090, summary: 'Premium 1-finger HC lever.',
+          specs: { caliper: '4-piston pro', lever: 'HC 1-finger', pads: 'Race compound' } }
       ]
     },
     {
@@ -351,17 +593,17 @@
       title: 'Headlight',
       blurb: 'Plug-and-play kits built for these bikes.',
       options: [
-        { id: 'stock-light', name: 'Stock', brand: 'MaxRides', priceDelta: 0,
-          summary: 'OEM 35 W halogen.', specs: { lumens: '~600' } },
-        { id: 'bd-s2-pro', name: 'Baja Designs S2 Pro kit', brand: 'Baja Designs',
-          priceDelta: 310, summary: 'Balanced pick. 2,245 raw lumens. Plug-and-play.',
-          specs: { lumens: '2,245 raw', beam: 'Driving/combo', install: 'Plug-and-play harness' } },
-        { id: 'bd-squadron-pro', name: 'Baja Designs Squadron Pro kit', brand: 'Baja Designs',
+        { id: 'stock-light', name: 'Stock', brand: 'OEM', tier: 'budget',
+          priceDelta: 0, summary: 'OEM halogen.', specs: { lumens: '~600' } },
+        { id: 'cyclops-flush', name: 'Cyclops Headlight Kit', brand: 'Cyclops', tier: 'mid',
+          priceDelta: 240, summary: 'Talaria flush-mount favorite.',
+          specs: { lumens: '~1,800', install: 'Hardwire required' } },
+        { id: 'bd-s2-pro', name: 'Baja Designs S2 Pro kit', brand: 'Baja Designs', tier: 'mid',
+          priceDelta: 310, summary: '2,245 raw lumens. Plug-and-play.',
+          specs: { lumens: '2,245', beam: 'Driving/combo' } },
+        { id: 'bd-squadron-pro', name: 'Baja Designs Squadron Pro', brand: 'Baja Designs', tier: 'premium',
           priceDelta: 410, summary: 'Serious night-trail. 4,095 raw lumens.',
-          specs: { lumens: '4,095 raw', beam: 'Driving/combo', amber: 'Amber lens included', mount: 'Bracket + switch incl.' } },
-        { id: 'cyclops-flush', name: 'Cyclops Headlight Kit', brand: 'Cyclops',
-          priceDelta: 240, summary: 'Talaria X3 flush-mount favorite.',
-          specs: { lumens: '~1,800', install: 'Hardwire required', look: 'Flush' } }
+          specs: { lumens: '4,095', beam: 'Driving/combo', amber: 'Amber lens included' } }
       ]
     },
     {
@@ -370,14 +612,14 @@
       title: 'Mirrors',
       blurb: 'Cross-platform favorite. Lifetime warranty.',
       options: [
-        { id: 'none-mirrors', name: 'None', brand: 'MaxRides', priceDelta: 0,
-          summary: 'No mirrors.', specs: {} },
-        { id: 'doubletake-v2', name: 'Adventure Mirror V2 pair', brand: 'Doubletake',
-          priceDelta: 126, summary: '"Baseball-bat tested." Zytel body + RAM ball.',
+        { id: 'none-mirrors', name: 'None', brand: '—', tier: 'budget',
+          priceDelta: 0, summary: 'No mirrors.', specs: {} },
+        { id: 'doubletake-v2', name: 'Adventure Mirror V2 pair', brand: 'Doubletake', tier: 'budget',
+          priceDelta: 126, summary: 'Baseball-bat tested. Zytel + RAM ball.',
           specs: { body: 'Glass-filled Zytel', mount: 'RAM ball', warranty: 'Lifetime' } },
-        { id: 'crg-bar-end', name: 'CRG Hindsight Lanesplitter bar-end', brand: 'CRG',
-          priceDelta: 135, summary: 'Premium street look. Convex tinted glass.',
-          specs: { mount: 'Bar-end clamp', glass: 'Convex tinted', dampening: 'Vibration-damped rubber' } }
+        { id: 'crg-bar-end', name: 'CRG Hindsight bar-end', brand: 'CRG', tier: 'mid',
+          priceDelta: 135, summary: 'Premium street look.',
+          specs: { mount: 'Bar-end clamp', glass: 'Convex tinted' } }
       ]
     },
     {
@@ -386,16 +628,16 @@
       title: 'Mudguards',
       blurb: 'Keep the mud off you and the bike.',
       options: [
-        { id: 'none-fender', name: 'None', brand: 'MaxRides', priceDelta: 0,
-          summary: 'No fenders.', specs: {} },
-        { id: 'gritshift-v2', name: 'Extended Rear Fender V2 + side shrouds', brand: 'GritShift',
-          priceDelta: 95, summary: 'Most-recommended rear fender across r/Sur_Ron.',
-          specs: { fitment: 'Sur-Ron LBX, Talaria, Segway X160/X260', material: 'ABS', install: 'Bolt-on, no drill' } },
-        { id: 'acerbis-front', name: 'Acerbis Front Fender', brand: 'Acerbis',
-          priceDelta: 45, summary: 'Race-style standard upgrade.',
-          specs: { fitment: 'Universal MX', mount: 'OEM mounting points' } },
-        { id: 'mto-carbon', name: 'MTO Brothers Carbon Front Fender', brand: 'MTO Brothers',
-          priceDelta: 159, summary: 'Premium plug-and-play.',
+        { id: 'none-fender', name: 'None', brand: '—', tier: 'budget',
+          priceDelta: 0, summary: 'No fenders.', specs: {} },
+        { id: 'acerbis-front', name: 'Acerbis Front Fender', brand: 'Acerbis', tier: 'budget',
+          priceDelta: 45, summary: 'Race-style standard.',
+          specs: { fitment: 'Universal MX' } },
+        { id: 'gritshift-v2', name: 'Extended Rear Fender V2 + shrouds', brand: 'GritShift', tier: 'budget',
+          priceDelta: 95, summary: 'Most-recommended on r/Sur_Ron.',
+          specs: { fitment: 'Sur-Ron LBX, Talaria, Segway', material: 'ABS', install: 'Bolt-on, no drill' } },
+        { id: 'mto-carbon', name: 'MTO Brothers Carbon Front Fender', brand: 'MTO Brothers', tier: 'mid',
+          priceDelta: 159, summary: 'Premium plug-and-play carbon.',
           specs: { material: 'Real carbon fiber', install: 'Plug-and-play' } }
       ]
     },
@@ -405,17 +647,18 @@
       title: 'Charger',
       blurb: 'Cut your charge time in half.',
       options: [
-        { id: 'stock-charger', name: 'Stock 5A', brand: 'MaxRides', priceDelta: 0,
-          summary: 'OEM 5A charger.', specs: { amperage: '5A', time: '4.5 hr full' } },
-        { id: 'luna-10a', name: 'Luna 10A', brand: 'Luna Cycle',
+        { id: 'stock-charger', name: 'Stock 5A', brand: 'OEM', tier: 'budget',
+          priceDelta: 0, summary: 'OEM 5A charger.',
+          specs: { amperage: '5A', time: '4.5 hr full' } },
+        { id: 'luna-10a', name: 'Luna 10A', brand: 'Luna Cycle', tier: 'mid',
           priceDelta: 209, summary: 'Trustworthy 10A replacement.',
-          specs: { amperage: '10A', time: '~2.5 hr full', case: 'Aluminum' } },
-        { id: 'ebmx-15a', name: 'EBMX 15A fast charger', brand: 'EBMX',
-          priceDelta: 359, summary: '1,005 W. Waterproof case. 150% faster than stock.',
+          specs: { amperage: '10A', time: '~2.5 hr full' } },
+        { id: 'ebmx-15a', name: 'EBMX 15A fast charger', brand: 'EBMX', tier: 'mid',
+          priceDelta: 359, summary: '1,005 W. Waterproof. 150% faster.',
           specs: { amperage: '15A', power: '1,005 W', time: '~1.5 hr full', case: 'IP65 waterproof' } },
-        { id: 'allchargers-prog', name: 'AllChargers programmable', brand: 'AllChargers',
+        { id: 'allchargers-prog', name: 'AllChargers programmable', brand: 'AllChargers', tier: 'premium',
           priceDelta: 399, summary: 'Set end voltage to 80% for battery longevity.',
-          specs: { endVoltage: 'Programmable 80–100%', use: 'Battery longevity', interface: 'Onboard display' } }
+          specs: { endVoltage: 'Programmable 80–100%', interface: 'Onboard display' } }
       ]
     },
     {
@@ -424,17 +667,17 @@
       title: 'Lock',
       blurb: 'The U-lock arms race ended in 2025.',
       options: [
-        { id: 'none-lock', name: 'None', brand: 'MaxRides', priceDelta: 0,
-          summary: 'No lock.', specs: {} },
-        { id: 'hiplok-d1000', name: 'Hiplok D1000', brand: 'Hiplok',
-          priceDelta: 379, summary: '2025 gold standard. Sold Secure Diamond — angle-grinder resistant.',
-          specs: { rating: 'Sold Secure Diamond', resistance: 'Angle-grinder tested', warranty: '10 yr' } },
-        { id: 'kryptonite-ny-mini', name: 'NY Fahgettaboudit Mini', brand: 'Kryptonite',
+        { id: 'none-lock', name: 'None', brand: '—', tier: 'budget',
+          priceDelta: 0, summary: 'No lock.', specs: {} },
+        { id: 'kryptonite-ny-mini', name: 'NY Fahgettaboudit Mini', brand: 'Kryptonite', tier: 'budget',
           priceDelta: 160, summary: 'Sold Secure Gold. 18 mm shackle.',
-          specs: { shackle: '18 mm hardened', rating: 'Sold Secure Gold', grinderTime: '~60 sec' } },
-        { id: 'abus-bordo', name: 'Bordo XPlus 6500A Alarm folding', brand: 'ABUS',
-          priceDelta: 219, summary: 'Super73 co-branded. 100 dB alarm, 3D motion sensor.',
-          specs: { type: 'Folding', alarm: '100 dB', rating: 'Sold Secure Gold' } }
+          specs: { shackle: '18 mm hardened', rating: 'Sold Secure Gold' } },
+        { id: 'abus-bordo', name: 'Bordo XPlus 6500A Alarm folding', brand: 'ABUS', tier: 'mid',
+          priceDelta: 219, summary: 'Super73 co-branded. 100 dB alarm.',
+          specs: { type: 'Folding', alarm: '100 dB', rating: 'Sold Secure Gold' } },
+        { id: 'hiplok-d1000', name: 'Hiplok D1000', brand: 'Hiplok', tier: 'mid',
+          priceDelta: 379, summary: '2025 gold standard. Angle-grinder resistant.',
+          specs: { rating: 'Sold Secure Diamond', resistance: 'Angle-grinder tested', warranty: '10 yr' } }
       ]
     },
     {
@@ -443,18 +686,18 @@
       title: 'Rack & bags',
       blurb: 'For commuters and overnight rides.',
       options: [
-        { id: 'none-cargo', name: 'None', brand: 'MaxRides', priceDelta: 0,
-          summary: 'No racks or bags.', specs: {} },
-        { id: 'kemimoto-rack', name: 'KEMIMOTO rear rack', brand: 'KEMIMOTO',
+        { id: 'none-cargo', name: 'None', brand: '—', tier: 'budget',
+          priceDelta: 0, summary: 'No racks or bags.', specs: {} },
+        { id: 'kemimoto-rack', name: 'KEMIMOTO rear rack', brand: 'KEMIMOTO', tier: 'budget',
           priceDelta: 70, summary: 'Model-specific. Holds 12 lb.',
-          specs: { fitment: 'Sur-Ron LBX, X160/X260, Talaria MX3/MX4', capacity: '12 lb', material: 'Powder-coated steel' } },
-        { id: 'ccw-tank-bag', name: 'CCW tank bag', brand: 'Charged Cycle Works',
-          priceDelta: 120, summary: 'Soft luggage, dominant CCW pick.',
+          specs: { fitment: 'Sur-Ron / Talaria / Segway', capacity: '12 lb', material: 'Powder-coated steel' } },
+        { id: 'ccw-tank-bag', name: 'CCW tank bag', brand: 'Charged Cycle Works', tier: 'mid',
+          priceDelta: 120, summary: 'Soft luggage. Dominant CCW pick.',
           specs: { capacity: '4 L', mounting: 'Magnetic + strap', water: 'Water-resistant' } },
-        { id: 'cnc-s-series', name: 'S-Series rack + cargo crate (Super73)', brand: 'Chained and Charged',
-          priceDelta: 229, summary: 'Most-purchased S2 cargo kit.',
-          specs: { fitment: 'Super73 S2 / RX', material: 'Aluminum', crate: 'Modular cargo crate included' },
-          applicableBikes: ['cruiser'] }
+        { id: 'cnc-s-series', name: 'S-Series rack + crate (Super73)', brand: 'Chained and Charged', tier: 'mid',
+          priceDelta: 229, summary: 'Most-purchased Super73 cargo kit.',
+          specs: { fitment: 'Super73 S2 / RX', material: 'Aluminum' },
+          applicableBikes: ['super73-rx', 'super73-zx'] }
       ]
     },
     {
@@ -463,112 +706,112 @@
       title: 'Safety pack',
       blurb: 'Helmet + gloves bundled, properly sized.',
       options: [
-        { id: 'none-safety', name: 'None', brand: 'MaxRides', priceDelta: 0,
-          summary: 'Bring your own.', specs: {} },
-        { id: 'dirt-pack', name: 'Dirt pack', brand: 'Fox / Fox',
-          priceDelta: 610, summary: 'Fox V3 RS helmet + Fox Dirtpaw gloves.',
-          specs: { helmet: 'Fox V3 RS — MIPS Integra Split', gloves: 'Fox Dirtpaw', cert: 'DOT / ECE 22.06', weight: '2.9 lb helmet' } },
-        { id: 'premium-dirt-pack', name: 'Premium dirt pack', brand: '6D / Alpinestars',
-          priceDelta: 795, summary: '6D ATR-3 + Alpinestars SP-8 V3.',
-          specs: { helmet: '6D ATR-3 — ODS rotational tech', gloves: 'Alpinestars SP-8 V3', cert: 'ECE 22.06', warranty: 'Rebuildable after impact' } },
-        { id: 'street-pack', name: 'Street pack (Super73 / Cruiser)', brand: 'Ruroc / 100%',
+        { id: 'none-safety', name: 'None', brand: '—', tier: 'budget',
+          priceDelta: 0, summary: 'Bring your own.', specs: {} },
+        { id: 'street-pack', name: 'Street pack', brand: 'Ruroc / 100%', tier: 'mid',
           priceDelta: 430, summary: 'Ruroc Atlas 4.0 + 100% Brisker gloves.',
-          specs: { helmet: 'Ruroc Atlas 4.0 — ECE 22.06', bluetooth: 'Shockwave insert compatible', gloves: '100% Brisker (cold-weather)', wind: '57% quieter than prior Atlas' } },
-        { id: 'street-premium-pack', name: 'Street premium pack', brand: 'Ruroc / Knox',
+          specs: { helmet: 'Ruroc Atlas 4.0 — ECE 22.06', gloves: '100% Brisker', wind: '57% quieter than prior Atlas' } },
+        { id: 'dirt-pack', name: 'Dirt pack', brand: 'Fox / Fox', tier: 'mid',
+          priceDelta: 610, summary: 'Fox V3 RS helmet + Fox Dirtpaw gloves.',
+          specs: { helmet: 'Fox V3 RS — MIPS Integra Split', gloves: 'Fox Dirtpaw', cert: 'DOT / ECE 22.06' } },
+        { id: 'street-premium-pack', name: 'Street premium pack', brand: 'Ruroc / Knox', tier: 'premium',
           priceDelta: 615, summary: 'Ruroc Eox + Knox Orsa OR3.',
-          specs: { helmet: 'Ruroc Eox — 2025 flagship', gloves: 'Knox Orsa OR3', cert: 'ECE 22.06' } }
+          specs: { helmet: 'Ruroc Eox — 2025 flagship', gloves: 'Knox Orsa OR3' } },
+        { id: 'premium-dirt-pack', name: 'Premium dirt pack', brand: '6D / Alpinestars', tier: 'premium',
+          priceDelta: 795, summary: '6D ATR-3 + Alpinestars SP-8 V3.',
+          specs: { helmet: '6D ATR-3 — ODS rotational tech', gloves: 'Alpinestars SP-8 V3', warranty: 'Rebuildable after impact' } }
       ]
     }
   ];
 
-  // ----- Rides (mock social feed) ---------------------------------
+  // ----- Rides (mock social feed) — refreshed for new bike slugs --
 
   var RIDES = [
-    { id: 'r1', handle: '@jadenrides', age: 13, city: 'Austin, TX', bike: 'dirt-01',
-      kind: 'TRICK CLIP', when: '2 min ago', likes: 8243, comments: 412, shares: 412, watching: 23,
-      caption: 'This is INSANE. First ride. The chrome dip in the sun is unreal.',
-      mods: ['Satin black "PVD-look"', 'EBMX 72V 42Ah', 'Warp 9 16/19', 'Plate #73'],
-      finish: '#202020' },
-    { id: 'r2', handle: '@mayacruises', age: 14, city: 'San Diego, CA', bike: 'cruiser',
+    { id: 'r1', handle: '@jadenrides', age: 13, city: 'Austin, TX', bike: 'sur-ron-light-bee-x',
+      kind: 'TRICK CLIP', when: '2 min ago', likes: 8243, comments: 412, shares: 412,
+      caption: 'First ride on the LBX. PVD-look wrap in sunlight is unreal.',
+      mods: ['Satin black PVD-look', 'EBMX 72V 42Ah QS8', 'Warp 9 Racing 16/19 anodized'],
+      finish: '#1A1A1A' },
+    { id: 'r2', handle: '@mayacruises', age: 14, city: 'San Diego, CA', bike: 'super73-rx',
       kind: 'REVEAL', when: '12 min ago', likes: 2143, comments: 89, shares: 41,
-      caption: 'Mom let me get this for my birthday and I haven’t stopped riding all weekend.',
-      mods: ['Brown leather banana', 'Matte clear', 'Plate #14'],
-      finish: '#222' },
-    { id: 'r3', handle: '@coletheripper', age: 15, city: 'Boulder, CO', bike: 'dirt-01',
+      caption: 'Mom let me get this for my birthday and I haven\'t stopped riding all weekend.',
+      mods: ['Brown leather banana', 'Matte clear', 'CRG Hindsight bar-end'],
+      finish: '#5A2D14' },
+    { id: 'r3', handle: '@coletheripper', age: 15, city: 'Boulder, CO', bike: 'talaria-sting-mx4',
       kind: 'TRICK CLIP', when: '1 hr ago', likes: 6812, comments: 220, shares: 198,
-      caption: 'Hit a 6ft step-down at the spillway. Frame is bulletproof.',
-      mods: ['Race red frame', 'FastAce ALX13RC 2.0', 'MaxxEnduro tires', 'Galfer Wave 220'],
+      caption: 'Hit a 6ft step-down at the spillway. MX4 frame is bulletproof.',
+      mods: ['FastAce ALX13RC 2.0', 'MaxxEnduro', 'Galfer Wave 220 mm rotor'],
       finish: '#D11515' },
-    { id: 'r4', handle: '@eli11', age: 11, city: 'Tulsa, OK', bike: 'starter',
+    { id: 'r4', handle: '@eli11', age: 11, city: 'Tulsa, OK', bike: 'macfox-x2',
       kind: 'REVEAL', when: '3 hr ago', likes: 1411, comments: 56, shares: 22,
       caption: 'My very first e-bike. I named her Sparky.',
-      mods: ['Acid lime frame', 'Plate "ELI"'],
+      mods: ['Orange plate', 'Adventure Mirror V2 pair'],
       finish: '#C8FF00' },
-    { id: 'r5', handle: '@sofiarides', age: 13, city: 'Brooklyn, NY', bike: 'cruiser',
+    { id: 'r5', handle: '@sofiarides', age: 13, city: 'Brooklyn, NY', bike: 'super73-zx',
       kind: 'BUILD UPDATE', when: '6 hr ago', likes: 3214, comments: 102, shares: 78,
       caption: 'Day 3 of the build. Just installed the BAC855. So smooth.',
-      mods: ['Handlworks BAC855', 'CCW MX seat', 'ProTaper A50'],
+      mods: ['Handlworks BAC855', 'MX seat (taller, slim)', 'ProTaper A50 (2" rise)'],
       finish: '#0A0A0A' },
-    { id: 'r6', handle: '@theogarage', age: 12, city: 'Portland, OR', bike: 'dirt-01',
+    { id: 'r6', handle: '@theogarage', age: 12, city: 'Portland, OR', bike: 'sur-ron-ultra-bee',
       kind: 'GARAGE TOUR', when: 'yesterday', likes: 4502, comments: 184, shares: 90,
-      caption: 'Three MaxRides in one garage. Living the dream.',
-      mods: ['Forged carbon wrap', 'ODI Rogue grips', 'Plate #88'],
+      caption: 'Three Sur-Rons in one garage. Living the dream.',
+      mods: ['Forged carbon wrap', 'Rogue lock-on', 'Orange plate'],
       finish: '#0F0F0F' },
-    { id: 'r7', handle: '@maya_r_rides', age: 14, city: 'Phoenix, AZ', bike: 'starter',
-      kind: 'EVENT', when: '2 days ago', likes: 1112, comments: 38, shares: 14,
-      caption: 'Local meetup. So many MaxRides on one street.',
-      mods: ['Royal purple frame', 'Plate "MR14"'],
-      finish: '#5A2DDD' },
-    { id: 'r8', handle: '@noahsdirt', age: 16, city: 'Denver, CO', bike: 'dirt-01',
-      kind: 'MOD DROP', when: '3 days ago', likes: 5601, comments: 278, shares: 121,
-      caption: 'Just dropped the X-9000 V3 in. Throttle response is a different planet.',
-      mods: ['EBMX X-9000 V3', 'EBMX 72V 42Ah', 'Magura MT7 Pro'],
-      finish: '#FF5A1F' }
+    { id: 'r7', handle: '@noahsdirt', age: 16, city: 'Denver, CO', bike: 'etm-rtr-xl',
+      kind: 'MOD DROP', when: '2 days ago', likes: 5601, comments: 278, shares: 121,
+      caption: 'Just dropped the X-9000 V3 in the RTR XL. Throttle response is a different planet.',
+      mods: ['EBMX X-9000 V3', 'EBMX 72V 42Ah QS8', 'Magura MT7 Pro'],
+      finish: '#FF5A1F' },
+    { id: 'r8', handle: '@racing_kai', age: 16, city: 'Costa Mesa, CA', bike: 'stark-varg',
+      kind: 'EVENT', when: '3 days ago', likes: 9821, comments: 502, shares: 311,
+      caption: 'Took the VARG to a local AMA race. Beat everyone on a 250F.',
+      mods: ['EXT Ferro Fork', 'Öhlins TTX custom', 'Premium dirt pack'],
+      finish: '#000000' }
   ];
 
-  // ----- Reviews --------------------------------------------------
+  // ----- Reviews (touched to use new bike names) ------------------
 
   var REVIEWS = [
     { id: 'rv1', stars: 5, when: '2 weeks ago', author: 'Jake B.', age: '14', city: 'San Diego',
-      verifiedBuild: 'Dirt 01 + Satin black PVD-look', helpful: 87, withPhotos: true,
-      title: 'Way better than the Sur-Ron my friend has.',
-      body: 'Got the Dirt 01 with the EBMX battery and Galfer brakes. Hits 38 like nothing and the wrap looks crazy. Customer service answered in 2 hours when I had a question. 10/10.' },
+      verifiedBuild: 'Sur-Ron Light Bee X + Satin black PVD-look', helpful: 87, withPhotos: true,
+      title: 'Better than my friend\'s old Sur-Ron.',
+      body: 'Got the 2025 LBX with the EBMX battery and Galfer brakes. Hits 47 like nothing and the wrap looks crazy. Customer service answered in 2 hours. 10/10.' },
     { id: 'rv2', stars: 5, when: '3 weeks ago', author: 'Sarah M.', age: 'parent', city: 'Boulder',
-      verifiedBuild: 'Cruiser + Matte clear', helpful: 64, withPhotos: false, isParent: true,
+      verifiedBuild: 'Super73 RX + Matte clear', helpful: 64, withPhotos: false, isParent: true,
       title: 'Worth every penny (says the parent).',
-      body: 'Bought the Cruiser for my daughter’s 13th. The builder was fun for HER to use. Shipped in a week. She hasn’t stopped riding. Safer than a moped, faster than her old bike.' },
+      body: 'Bought the RX for my daughter\'s 13th. The builder was fun for HER to use. Shipped in a week. She hasn\'t stopped riding. Safer than a moped, faster than her old bike.' },
     { id: 'rv3', stars: 4, when: '1 month ago', author: 'Eli K.', age: '11', city: 'Tulsa',
-      verifiedBuild: 'Starter — stock build', helpful: 41, withPhotos: true,
-      title: 'Sick bike, wish the stock battery had more range.',
-      body: 'Looks insane, handles great, but the stock battery only gets me about 30 miles. Should’ve paid the extra for the EBMX. Upgrade in the builder.' },
+      verifiedBuild: 'MacFox X2 — stock build', helpful: 41, withPhotos: true,
+      title: 'Sick bike, wish I\'d sprung for the dual-battery.',
+      body: 'Looks insane, handles great, but the single-battery only gets me about 30 miles. Should\'ve paid for the dual. Lesson learned.' },
     { id: 'rv4', stars: 5, when: '1 month ago', author: 'Marcus T.', age: '15', city: 'Phoenix',
-      verifiedBuild: 'Dirt 01 + Forged carbon + Magura MT5', helpful: 56, withPhotos: true,
+      verifiedBuild: 'Talaria Sting MX4 + Forged carbon + Magura MT5', helpful: 56, withPhotos: true,
       title: 'The brakes alone justify the upgrade.',
       body: 'Did the Magura MT5 swap day one. Night and day difference vs stock. The carbon wrap holds up to dust like a champ.' },
     { id: 'rv5', stars: 5, when: '6 weeks ago', author: 'Priya R.', age: 'parent', city: 'Seattle',
-      verifiedBuild: 'Cruiser', helpful: 38, withPhotos: false, isParent: true,
+      verifiedBuild: 'Super73 ZX', helpful: 38, withPhotos: false, isParent: true,
       title: 'Bought it with my son. Best birthday yet.',
-      body: 'We did the split-pay. He put down his birthday money and I covered the rest. Whole experience felt like buying a Tesla. Highly recommend the parent-share feature — made the conversation easy.' },
+      body: 'We did the split-pay. He put down his birthday money and I covered the rest. Whole experience felt like buying a Tesla. Highly recommend the parent-share feature.' },
     { id: 'rv6', stars: 5, when: '6 weeks ago', author: 'Cole P.', age: '15', city: 'Boulder',
-      verifiedBuild: 'Dirt 01 + FastAce ALX13RC 2.0 + EBMX X-9000 V3', helpful: 92, withPhotos: true,
+      verifiedBuild: 'Sur-Ron Light Bee X + FastAce + EBMX X-9000 V3', helpful: 92, withPhotos: true,
       title: 'Full send.',
       body: 'I race local hare scrambles and the bike keeps up with full-size 250s on the right setup. Fork upgrade made the biggest single difference.' },
     { id: 'rv7', stars: 4, when: '7 weeks ago', author: 'Sofia L.', age: '13', city: 'Brooklyn',
-      verifiedBuild: 'Cruiser + Brown leather banana', helpful: 28, withPhotos: true,
+      verifiedBuild: 'Super73 RX + Brown leather banana', helpful: 28, withPhotos: true,
       title: 'Cute, fast, school is jealous.',
       body: 'Wish there was a smaller leg-reach option. Otherwise perfect. The wishlist feature got my parents to actually buy this without arguing.' },
     { id: 'rv8', stars: 5, when: '2 months ago', author: 'Theo M.', age: '12', city: 'Portland',
-      verifiedBuild: 'Dirt 01', helpful: 31, withPhotos: false,
+      verifiedBuild: 'ETM RTR Sport', helpful: 31, withPhotos: false,
       title: 'My friends saved up for one too.',
-      body: 'Once one of us got it, three more friends bought MaxRides. The Reveals feed is sick — I see my own video on there now.' },
+      body: 'Once one of us got the RTR, three more friends bought one. The Rides feed is sick — I see my own video on there now.' },
     { id: 'rv9', stars: 5, when: '2 months ago', author: 'Ben H.', age: 'parent', city: 'Atlanta',
-      verifiedBuild: 'Starter', helpful: 22, withPhotos: false, isParent: true,
-      title: 'Build quality is real.',
-      body: 'I expected a toy. It’s not a toy. Welds are clean, electronics are well-routed, battery has a real BMS. Worth the price.' },
+      verifiedBuild: 'Rawrr Mantis', helpful: 22, withPhotos: false, isParent: true,
+      title: 'Build quality is real for the price.',
+      body: 'I expected a toy. It\'s not a toy. Welds are clean, electronics are well-routed, battery has a real BMS. Worth the price.' },
     { id: 'rv10', stars: 4, when: '3 months ago', author: 'Noah Z.', age: '16', city: 'Denver',
-      verifiedBuild: 'Dirt 01 + EBMX X-9000 V3 + 72V 42Ah', helpful: 47, withPhotos: true,
+      verifiedBuild: 'ETM RTR XL + EBMX X-9000 V3 + 72V 42Ah', helpful: 47, withPhotos: true,
       title: 'X-9000 V3 is wild but expect a learning curve.',
-      body: 'Took me a day to dial in the power-mode presets. Once tuned, it’s incredible. Knock a star off for the steep learning curve at first.' }
+      body: 'Took me a day to dial in the power-mode presets. Once tuned, it\'s incredible. Knock a star off for the learning curve at first.' }
   ];
 
   // ----- Star rating breakdown for Reviews hero -------------------
@@ -578,13 +821,16 @@
 
   window.MAXRIDES_DATA = {
     BIKES: BIKES,
+    BIKE_CATEGORIES: BIKE_CATEGORIES,
     FRAME_COLORS: FRAME_COLORS,
     COMPONENT_CATEGORIES: COMPONENT_CATEGORIES,
+    TIER_RANK: TIER_RANK,
     RIDES: RIDES,
     REVIEWS: REVIEWS,
     REVIEW_BREAKDOWN: REVIEW_BREAKDOWN,
     REVIEW_OVERALL: REVIEW_OVERALL,
 
-    findBike: function (slug) { return BIKES.find(function (b) { return b.slug === slug; }); }
+    findBike: function (slug) { return BIKES.find(function (b) { return b.slug === slug; }); },
+    bikesByCategory: function (catId) { return BIKES.filter(function (b) { return b.category === catId; }); }
   };
 })();

@@ -133,7 +133,7 @@
     });
     var total = lineItems.reduce(function (s, li) { return s + li.price; }, 0);
 
-    stageEl.innerHTML = window.BIKE_SVG[bike.slug](color.hex);
+    stageEl.innerHTML = window.bikeImage(bike.slug, color.hex);
 
     if (payload.note) {
       noteHost.innerHTML =

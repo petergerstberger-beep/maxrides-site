@@ -25,16 +25,14 @@
     els.forEach(function (el) { io.observe(el); });
   }
 
-  // -- Bike hydration: <div data-bike="dirt-01" data-accent="#FF5A1F"> -
+  // -- Bike hydration: <div data-bike="<slug>" data-accent="#FF5A1F"> -
   function initBikes() {
-    if (!window.BIKE_SVG) return;
+    if (!window.bikeImage) return;
     var stages = document.querySelectorAll('[data-bike]');
     stages.forEach(function (el) {
       var slug = el.getAttribute('data-bike');
       var accent = el.getAttribute('data-accent') || '#FF5A1F';
-      if (window.BIKE_SVG[slug]) {
-        el.innerHTML = window.BIKE_SVG[slug](accent);
-      }
+      el.innerHTML = window.bikeImage(slug, accent);
     });
   }
 

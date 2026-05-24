@@ -301,17 +301,18 @@
   (function () {
     'use strict';
     var DATA = window.MAXRIDES_DATA;
-    var slug = new URLSearchParams(location.search).get('slug') || 'dirt-01';
+    var slug = new URLSearchParams(location.search).get('slug') || 'sur-ron-light-bee-x';
     var bike = DATA.findBike(slug) || DATA.BIKES[0];
+    slug = bike.slug;
 
     // Hydrate header
     document.title = bike.name + ' — MaxRides';
-    document.getElementById('bd-eyebrow').textContent = bike.label;
+    document.getElementById('bd-eyebrow').textContent = bike.brand;
     document.getElementById('bd-name').textContent = bike.name + '.';
     document.getElementById('bd-copy').textContent = bike.heroCopy;
 
     // Stage
-    document.getElementById('bd-stage').innerHTML = window.BIKE_SVG[bike.slug]('#FF5A1F');
+    document.getElementById('bd-stage').innerHTML = window.bikeImage(bike.slug, '#FF5A1F');
 
     // Price + rating
     document.getElementById('bd-price').textContent = '$' + bike.basePrice.toLocaleString();
