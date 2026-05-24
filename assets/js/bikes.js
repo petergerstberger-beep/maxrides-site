@@ -125,7 +125,7 @@
     ].join('');
   }
 
-  // ---- Silhouette: STARTER / COMMUTER (MacFox / Rad style) -------
+  // ---- Silhouette: STARTER / COMMUTER (Macfox / Rad style) -------
   function silStarter(accent) {
     accent = accent || '#FF5A1F';
     return [

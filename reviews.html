@@ -134,9 +134,10 @@
 
     <div class="rv-filter-row" id="rv-filters" role="toolbar" aria-label="Filter reviews">
       <button type="button" class="chip chip--active" data-filter="all">All bikes</button>
-      <button type="button" class="chip" data-filter="dirt-01">Dirt 01</button>
-      <button type="button" class="chip" data-filter="cruiser">Cruiser</button>
-      <button type="button" class="chip" data-filter="starter">Starter</button>
+      <button type="button" class="chip" data-filter="sur-ron">Sur-Ron</button>
+      <button type="button" class="chip" data-filter="talaria">Talaria</button>
+      <button type="button" class="chip" data-filter="super73">Super73</button>
+      <button type="button" class="chip" data-filter="etm">ETM</button>
       <span style="flex:1;"></span>
       <button type="button" class="chip" data-filter="photos">With photos</button>
       <button type="button" class="chip" data-filter="verified">Verified</button>
@@ -195,7 +196,10 @@
     function render() {
       var view = REVIEWS.slice();
       if (state.bikeFilter !== 'all') {
-        view = view.filter(function (r) { return r.verifiedBuild.toLowerCase().indexOf(state.bikeFilter.replace('-', ' ')) !== -1 || r.verifiedBuild.toLowerCase().indexOf(state.bikeFilter) !== -1; });
+        view = view.filter(function (r) {
+          var b = r.verifiedBuild.toLowerCase();
+          return b.indexOf(state.bikeFilter) !== -1;
+        });
       }
       if (state.tags.indexOf('photos') !== -1) view = view.filter(function (r) { return r.withPhotos; });
       if (state.tags.indexOf('parents') !== -1) view = view.filter(function (r) { return r.isParent; });
@@ -244,9 +248,9 @@
       var btn = e.target.closest('.chip');
       if (!btn) return;
       var f = btn.getAttribute('data-filter');
-      if (['all','dirt-01','cruiser','starter'].indexOf(f) !== -1) {
+      if (['all','sur-ron','talaria','super73','etm'].indexOf(f) !== -1) {
         state.bikeFilter = f;
-        filters.querySelectorAll('[data-filter="all"], [data-filter="dirt-01"], [data-filter="cruiser"], [data-filter="starter"]').forEach(function (b) {
+        filters.querySelectorAll('[data-filter="all"], [data-filter="sur-ron"], [data-filter="talaria"], [data-filter="super73"], [data-filter="etm"]').forEach(function (b) {
           b.classList.toggle('chip--active', b === btn);
         });
       } else {
