@@ -248,7 +248,7 @@
       category: 'street',
       tier: 'mid',
       silhouette: 'cruiser',
-      photoUrl: 'https://onyxmotors.com/cdn/shop/files/ONYX_RCR_80V_STD_LUNAR_SILVER.00_1.webp?v=1750702767',
+      photoUrl: 'assets/img/bikes/onyx-rcr-80v.png',
       tagline: '75 mph moped with pedals.',
       heroCopy: '18 kW peak. 80V/45Ah pack. 0–30 in 1.7 sec. Regenerative braking. Still has pedals.',
       basePrice: 5199,
