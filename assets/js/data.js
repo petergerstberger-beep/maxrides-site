@@ -114,10 +114,10 @@
       category: 'dirt',
       tier: 'premium',
       silhouette: 'dirt',
-      photoUrl: 'https://ronsterrides.com/cdn/shop/files/rtrxlxproduct.png?v=1767251616&width=1445',
+      photoUrl: 'https://emotosuperstore.com/cdn/shop/files/Screenshot_2025-07-14_at_6.39.19_PM_7945818c-e650-4116-b091-1861c4f4c24a.png?v=1756932480',
       tagline: 'Ready to Rip. Flagship.',
       heroCopy: '16,000 W max output. Hot-swap Samsung pack. 65+ mph top speed. Built in-house by Electro & Co.',
-      basePrice: 5500,
+      basePrice: 3799,
       rating: 4.8,
       reviewCount: 312,
       specs: {
@@ -136,10 +136,10 @@
       category: 'dirt',
       tier: 'mid',
       silhouette: 'dirt',
-      photoUrl: 'https://electroandcompany.com/cdn/shop/files/3F872843-D46C-43CD-96F1-E1002D873D50.jpg?v=1776106017',
+      photoUrl: 'https://lithiumpowersports.com/cdn/shop/files/etm-rtr-sport-ready-to-rip-electric-trail-machine-bike-erides-994.webp?v=1773421026&width=600',
       tagline: 'Newly engineered. Newly powered.',
       heroCopy: '8,000 W peak. 55+ mph. 72V/25Ah battery. The evolution of the original ETM RTR.',
-      basePrice: 4000,
+      basePrice: 2999,
       rating: 4.7,
       reviewCount: 421,
       specs: {
@@ -161,7 +161,7 @@
       photoUrl: 'https://www.epicwheelz.com/cdn/shop/files/rtr_6_1024x1024.jpg?v=1762968116',
       tagline: 'Ready to Rip — entry tier.',
       heroCopy: 'Designed for teens and adults. 60V/20Ah battery, expandable to 72V/45Ah. Roomy cockpit, precision-tuned suspension.',
-      basePrice: 2500,
+      basePrice: 2199,
       rating: 4.6,
       reviewCount: 287,
       specs: {
@@ -229,7 +229,7 @@
       photoUrl: 'https://www.incycle.com/cdn/shop/products/FS-V0037-HS.jpg?v=1665621972',
       tagline: 'The iconic Super73.',
       heroCopy: 'Full-size frame. Removable battery. The Class-3 e-bike everyone recognizes — your school drop-off, but cooler.',
-      basePrice: 2795,
+      basePrice: 2995,
       rating: 4.7,
       reviewCount: 1894,
       specs: {
@@ -251,7 +251,7 @@
       photoUrl: 'https://onyxmotors.com/cdn/shop/files/ONYX_RCR_80V_STD_LUNAR_SILVER.00_1.webp?v=1750702767',
       tagline: '65 mph moped with pedals.',
       heroCopy: '18 kW peak. 80V/45Ah pack. 0–30 in 1.7 sec. Regenerative braking. Still has pedals.',
-      basePrice: 4699,
+      basePrice: 5199,
       rating: 4.7,
       reviewCount: 1208,
       specs: {
@@ -275,7 +275,7 @@
       photoUrl: 'https://emotosuperstore.com/cdn/shop/files/macfox-x2-electric-mountain-bikeemoto-superstore-4784904.png?v=1762492798',
       tagline: 'Fat-tire commuter. TikTok-famous.',
       heroCopy: '750 W hub motor (1,000 W peak). 65 N·m torque. Dual-battery option for 90-mile range. 20"×4" fat tires.',
-      basePrice: 2098,
+      basePrice: 1699,
       rating: 4.6,
       reviewCount: 3412,
       specs: {
