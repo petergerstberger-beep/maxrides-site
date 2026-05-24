@@ -33,12 +33,12 @@
       rating: 4.9,
       reviewCount: 1247,
       specs: {
-        topSpeed: '46 mph (75 km/h)',
-        range: '46 mi (75 km)',
-        motor: '8 kW peak mid-drive',
+        topSpeed: '46.6 mph (75 km/h)',
+        range: 'Up to 50 mi',
+        motor: '8 kW peak PMSM mid-drive',
         weight: '126 lb (57 kg)',
-        battery: '60V 40Ah Samsung 50S',
-        chargeTime: '2 hr to 100%'
+        battery: '60V 40Ah Samsung 50S (UL-certified)',
+        acceleration: '0–31 mph in 2.7 sec'
       }
     },
     {
@@ -94,14 +94,14 @@
       silhouette: 'dirt',
       photoUrl: 'https://lithiumpowersports.com/cdn/shop/files/stark-varg-mx-1-2-electric-motocross-bike-60-80-hp-off-road-red-erides-691.webp?v=1773489192',
       tagline: 'The supercar of electric dirt bikes.',
-      heroCopy: '80 hp. New 7.2 kWh battery. Arkenstone handlebar dashboard. Pros race pro motocross on it.',
+      heroCopy: '80 hp. 7.2 kWh battery (20% more range than MX 1.0). Arkenstone handlebar dashboard. Pros race pro motocross on it.',
       basePrice: 13490,
       rating: 5.0,
       reviewCount: 142,
       specs: {
-        topSpeed: '75 mph',
-        range: 'Up to ~1 hr race / 6 hr enduro',
-        motor: '80 hp peak (Alpha)',
+        topSpeed: '75 mph (rider-tunable)',
+        rideTime: '1.3–6 hr depending on rider + terrain',
+        motor: '80 hp peak (Alpha) / 60 hp (Standard)',
         weight: '260 lb (118 kg)',
         battery: '7.2 kWh Li-ion',
         suspension: 'KYB AOS factory race'
@@ -160,17 +160,17 @@
       silhouette: 'starter',
       photoUrl: 'https://www.epicwheelz.com/cdn/shop/files/rtr_6_1024x1024.jpg?v=1762968116',
       tagline: 'Ready to Rip — entry tier.',
-      heroCopy: 'Designed for teens and adults. 60V/20Ah battery, expandable to 72V/45Ah. Roomy cockpit, precision-tuned suspension.',
+      heroCopy: 'Designed for teens and adults. 60V/20Ah hot-swap battery, expandable to 72V/40Ah. The Affordable 110-killer.',
       basePrice: 2199,
       rating: 4.6,
       reviewCount: 287,
       specs: {
-        topSpeed: '40 mph',
-        range: '25 mi',
-        motor: '5,000 W peak',
-        weight: '120 lb',
-        battery: '60V 20Ah (expandable to 72V 45Ah)',
-        suspension: 'Tuned for confidence + control'
+        topSpeed: '45+ mph',
+        range: '20 mi (stock 60V 20Ah)',
+        motor: '5,000 W peak E&C IPM brushless',
+        weight: '120 lb (48/52 F/R balance)',
+        battery: '60V 20Ah hot-swap (expandable to 72V 40Ah)',
+        tires: '60/100-14 F · 80/100-12 R'
       }
     },
     {
@@ -211,11 +211,11 @@
       rating: 4.8,
       reviewCount: 2104,
       specs: {
-        topSpeed: '28 mph (Class 3) / 35 mph (off-road)',
-        range: '40+ mi',
-        motor: '2,000 W peak hub',
-        weight: '84 lb',
-        battery: '960 Wh removable',
+        topSpeed: '28+ mph (Class 3 / Unlimited)',
+        range: '40 mi throttle / 75 mi pedal-assist',
+        motor: '2,000 W peak internally-geared hub',
+        weight: '84 lb (38 kg)',
+        battery: '48V 20Ah removable (960 Wh)',
         suspension: 'Fully adjustable dual suspension'
       }
     },
@@ -233,12 +233,12 @@
       rating: 4.7,
       reviewCount: 1894,
       specs: {
-        topSpeed: '28 mph (Class 3)',
-        range: '40 mi',
-        motor: '2,000 W peak hub',
+        topSpeed: '28+ mph (Class 3 / Unlimited)',
+        range: '40 mi throttle / 75 mi pedal-assist',
+        motor: '750 W (1,200 W road / 2,000 W off-road peak)',
         weight: '73 lb',
-        battery: '48V 17.5Ah removable',
-        suspension: 'Telescopic front fork'
+        battery: '48V 20Ah removable (960 Wh)',
+        modes: 'Class 1 / 2 / 3 / Off-road'
       }
     },
     {
@@ -249,18 +249,18 @@
       tier: 'mid',
       silhouette: 'cruiser',
       photoUrl: 'https://onyxmotors.com/cdn/shop/files/ONYX_RCR_80V_STD_LUNAR_SILVER.00_1.webp?v=1750702767',
-      tagline: '65 mph moped with pedals.',
+      tagline: '75 mph moped with pedals.',
       heroCopy: '18 kW peak. 80V/45Ah pack. 0–30 in 1.7 sec. Regenerative braking. Still has pedals.',
       basePrice: 5199,
       rating: 4.7,
       reviewCount: 1208,
       specs: {
-        topSpeed: '65 mph',
-        range: '55 mi Sport / 130 mi Eco',
+        topSpeed: '75 mph (Hyper) / 65 mph (Sport)',
+        range: '55 mi Sport / 75 mi Normal / 130 mi Eco',
         motor: '18 kW peak hub motor',
         battery: '80V 45Ah Li-ion',
-        wheels: '17" cast aluminum, 4" fat tires',
-        suspension: 'Inverted fork + adjustable coil-over rear'
+        modes: 'Eco 20mph / Normal 40mph / Sport 65+ / Hyper 75',
+        charging: '0–100% in 4.5 hr (10A)'
       }
     },
 
