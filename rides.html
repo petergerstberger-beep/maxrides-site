@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0A0A0A">
+  <title>Rides — MaxRides</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <style>
+    /* Rides feed = full-screen vertical TikTok-style feed */
+    html, body { overflow: hidden; height: 100%; }
+    body { background: #050505; }
+
+    .rides-app {
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .rides-tabs {
+      position: relative;
+      z-index: 10;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.85), rgba(0,0,0,0));
+      padding: var(--space-3) var(--space-5) var(--space-5);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .rides-tabs .left { display: flex; gap: var(--space-5); align-items: center; }
+    .rides-tab {
+      color: var(--text-tertiary);
+      font-size: 14px;
+      font-weight: 500;
+      padding-bottom: 4px;
+      cursor: pointer;
+    }
+    .rides-tab.is-active {
+      color: var(--text-primary);
+      border-bottom: 2px solid var(--accent);
+    }
+    .rides-tabs .wordmark { color: var(--text-primary); font-size: 14px; letter-spacing: 0.06em; font-weight: 500; }
+    .rides-tabs .search { color: var(--text-secondary); font-size: 18px; }
+
+    .feed {
+      flex: 1;
+      overflow-y: auto;
+      scroll-snap-type: y mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .feed::-webkit-scrollbar { display: none; }
+
+    .ride {
+      height: 100vh;
+      height: 100dvh;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      position: relative;
+      background: #0A0A0A;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ride__stage {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 var(--space-6);
+    }
+    .ride__stage svg { width: 100%; height: auto; max-height: 60vh; }
+
+    .ride__badge {
+      position: absolute;
+      top: 80px;
+      left: var(--space-5);
+      z-index: 4;
+    }
+
+    .ride__right {
+      position: absolute;
+      right: var(--space-3);
+      bottom: 160px;
+      z-index: 5;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-5);
+      align-items: center;
+    }
+    .ride__right .icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-full);
+      background: rgba(20, 20, 20, 0.7);
+      backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-primary);
+      font-size: 20px;
+      transition: transform var(--dur-fast) var(--ease-out);
+      cursor: pointer;
+    }
+    .ride__right .icon:hover { transform: scale(1.05); }
+    .ride__right .icon.avatar {
+      border: 2px solid var(--accent);
+      background: rgba(20, 20, 20, 0.9);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+      position: relative;
+    }
+    .ride__right .icon.avatar .plus {
+      position: absolute;
+      bottom: -6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 16px;
+      height: 16px;
+      border-radius: var(--radius-full);
+      background: var(--accent);
+      color: var(--text-on-accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .ride__right .count {
+      font-size: 11px;
+      color: var(--text-primary);
+      font-weight: 500;
+      margin-top: 2px;
+    }
+    .ride__right .stack { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+
+    .ride__overlay {
+      position: absolute;
+      bottom: 96px;
+      left: var(--space-5);
+      right: 72px;
+      z-index: 4;
+      color: var(--text-primary);
+    }
+    .ride__handle { font-size: 14px; font-weight: 500; }
+    .ride__caption { font-size: 13px; margin-top: var(--space-2); line-height: 1.45; }
+    .ride__chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: var(--space-3);
+    }
+    .ride__chip {
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(6px);
+      color: var(--text-primary);
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+    }
+    .ride__chip--bike {
+      background: rgba(255, 90, 31, 0.2);
+      color: var(--accent);
+      border: 1px solid rgba(255, 90, 31, 0.4);
+    }
+    .ride__location {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-top: var(--space-3);
+    }
+
+    .ride__remix {
+      position: absolute;
+      bottom: var(--space-4);
+      left: var(--space-5);
+      right: var(--space-5);
+      z-index: 5;
+      background: var(--accent);
+      color: var(--text-on-accent);
+      padding: 12px var(--space-4);
+      border-radius: var(--radius-md);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: filter var(--dur-fast) var(--ease-out);
+    }
+    .ride__remix:hover { filter: brightness(0.95); }
+    .ride__remix__title { font-size: 13px; font-weight: 500; line-height: 1; }
+    .ride__remix__sub { font-size: 11px; opacity: 0.75; margin-top: 2px; }
+    .ride__remix__arrow { font-size: 16px; font-weight: 500; }
+
+    /* Remix modal */
+    .remix-scrim {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      z-index: 60;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .remix-scrim.is-open { display: flex; }
+    .remix-sheet {
+      background: var(--bg-elevated);
+      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+      max-width: 560px;
+      width: 100%;
+      padding: var(--space-5);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .remix-sheet__handle {
+      width: 40px; height: 4px;
+      background: var(--border-strong);
+      border-radius: 2px;
+      margin: 0 auto var(--space-4);
+    }
+
+    .mod-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--space-3) var(--space-4);
+      margin-bottom: 6px;
+      cursor: pointer;
+      transition: border-color var(--dur-fast) var(--ease-out);
+    }
+    .mod-row.is-checked { border-color: var(--accent); }
+    .mod-row .check {
+      width: 18px; height: 18px;
+      border-radius: 4px;
+      border: 1px solid var(--border-strong);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-on-accent);
+      font-size: 11px;
+      margin-right: var(--space-3);
+    }
+    .mod-row.is-checked .check { background: var(--accent); border-color: var(--accent); }
+    .mod-row .name { font-size: 13px; font-weight: 500; }
+    .mod-row .name.is-secondary { color: var(--text-secondary); font-weight: 400; }
+    .mod-row .price { font-size: 13px; color: var(--accent); font-weight: 500; }
+    .mod-row .price.is-secondary { color: var(--text-secondary); }
+
+    .bike-pick-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin: var(--space-3) 0;
+    }
+    .bike-pick {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--space-3);
+      text-align: center;
+      cursor: pointer;
+      transition: border-color var(--dur-fast) var(--ease-out);
+    }
+    .bike-pick.is-selected { border-color: var(--accent); }
+    .bike-pick .n { font-size: 12px; font-weight: 500; }
+    .bike-pick .p { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+
+    .total-bar {
+      background: var(--surface);
+      border-radius: var(--radius-md);
+      padding: var(--space-3) var(--space-4);
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin: var(--space-3) 0;
+    }
+    .total-bar .label { font-size: 11px; color: var(--text-tertiary); }
+    .total-bar .value { font-size: 18px; font-weight: 500; color: var(--text-primary); }
+  </style>
+</head>
+<body>
+  <div class="rides-app">
+
+    <header class="rides-tabs">
+      <div class="left">
+        <a href="index.html" class="wordmark">maxrides</a>
+        <span class="rides-tab" data-tab="latest">Latest</span>
+        <span class="rides-tab is-active" data-tab="foryou">For you</span>
+        <span class="rides-tab" data-tab="following">Following</span>
+      </div>
+      <span class="search" aria-label="Search">⌕</span>
+    </header>
+
+    <div class="feed" id="feed"></div>
+
+  </div>
+
+  <!-- Remix modal -->
+  <div class="remix-scrim" id="remix-scrim" role="dialog" aria-modal="true">
+    <div class="remix-sheet">
+      <div class="remix-sheet__handle"></div>
+      <div class="row-between">
+        <h3 class="h3" id="remix-title">Remix</h3>
+        <button class="btn btn--ghost btn--sm" id="remix-close" aria-label="Close">✕</button>
+      </div>
+      <p class="body-sm" style="margin-top:4px;">Pick the mods you want. Apply to any bike.</p>
+
+      <p class="eyebrow" style="margin-top:var(--space-5);">Their mods</p>
+      <div id="remix-mods" style="margin-top:var(--space-2);"></div>
+
+      <p class="eyebrow" style="margin-top:var(--space-3);">Apply to</p>
+      <div class="bike-pick-grid" id="remix-bikes"></div>
+
+      <div class="total-bar">
+        <div>
+          <p class="label" id="remix-summary-line">Cruiser + 4 mods</p>
+          <p class="value" id="remix-total">$0</p>
+        </div>
+        <p class="caption text-accent" id="remix-saving"></p>
+      </div>
+
+      <button class="btn btn--primary btn--lg btn--block" id="remix-build">Build it<span class="btn__arrow">→</span></button>
+    </div>
+  </div>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/bikes.js"></script>
+  <script>
+  (function () {
+    'use strict';
+    var DATA = window.MAXRIDES_DATA;
+    var feed = document.getElementById('feed');
+    var scrim = document.getElementById('remix-scrim');
+
+    function fmt(n) { return '$' + n.toLocaleString('en-US'); }
+    function escapeHtml(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]; }); }
+    function findCategoryByOptionName(name) {
+      for (var i = 0; i < DATA.COMPONENT_CATEGORIES.length; i++) {
+        var cat = DATA.COMPONENT_CATEGORIES[i];
+        for (var j = 0; j < cat.options.length; j++) {
+          if (cat.options[j].name === name) return { cat: cat, opt: cat.options[j] };
+        }
+      }
+      return null;
+    }
+    function findFrameColorByName(name) { return DATA.FRAME_COLORS.find(function (c) { return c.name === name; }); }
+
+    function renderRideCard(r) {
+      var bike = DATA.findBike(r.bike);
+      var chipsHtml = '<span class="ride__chip ride__chip--bike">' + bike.name.replace(/^The /, '') + '</span>';
+      r.mods.forEach(function (m) { chipsHtml += '<span class="ride__chip">' + escapeHtml(m) + '</span>'; });
+
+      var article = document.createElement('article');
+      article.className = 'ride';
+      article.dataset.rideId = r.id;
+      article.innerHTML =
+        '<div class="ride__stage">' + window.BIKE_SVG[r.bike](r.finish) + '</div>' +
+        '<span class="badge ride__badge">' + escapeHtml(r.kind) + '</span>' +
+        '<div class="ride__right">' +
+          '<div class="stack"><div class="icon avatar">' + r.handle.charAt(1).toUpperCase() + '<div class="plus">+</div></div></div>' +
+          '<div class="stack"><div class="icon">♡</div><div class="count">' + (r.likes >= 1000 ? (r.likes / 1000).toFixed(1) + 'k' : r.likes) + '</div></div>' +
+          '<div class="stack"><div class="icon">💬</div><div class="count">' + r.comments + '</div></div>' +
+          '<div class="stack"><div class="icon">↗</div><div class="count">share</div></div>' +
+          '<div class="stack"><div class="icon">☆</div><div class="count">save</div></div>' +
+        '</div>' +
+        '<div class="ride__overlay">' +
+          '<div class="ride__handle">' + escapeHtml(r.handle) + '</div>' +
+          '<div class="ride__caption">' + escapeHtml(r.caption) + '</div>' +
+          '<div class="ride__chips">' + chipsHtml + '</div>' +
+          '<div class="ride__location">' + escapeHtml(r.city) + ' · ' + escapeHtml(r.when) + '</div>' +
+        '</div>' +
+        '<button class="ride__remix" data-remix-id="' + r.id + '">' +
+          '<div>' +
+            '<div class="ride__remix__title">Remix this build</div>' +
+            '<div class="ride__remix__sub">Pick mods · apply to any bike</div>' +
+          '</div>' +
+          '<span class="ride__remix__arrow">→</span>' +
+        '</button>';
+
+      article.querySelector('.ride__remix').addEventListener('click', function () { openRemix(r); });
+      return article;
+    }
+
+    DATA.RIDES.forEach(function (r) { feed.appendChild(renderRideCard(r)); });
+
+    // ---------- Remix modal ----------
+    var remixState = { ride: null, mods: [], bike: null };
+
+    function openRemix(ride) {
+      remixState.ride = ride;
+      remixState.bike = ride.bike;
+
+      // Resolve each mod name to a (cat, opt) pair
+      var modList = [];
+      ride.mods.forEach(function (modName) {
+        var hit = findCategoryByOptionName(modName);
+        if (hit) {
+          modList.push({ catId: hit.cat.id, catTitle: hit.cat.title, opt: hit.opt, checked: hit.cat.id !== 'plate' });
+        } else {
+          var c = findFrameColorByName(modName);
+          if (c) modList.push({ catId: 'frameColor', catTitle: 'Paint', opt: { name: c.name, priceDelta: c.priceDelta, id: c.id }, checked: true });
+        }
+      });
+      remixState.mods = modList;
+
+      document.getElementById('remix-title').textContent = 'Remix ' + ride.handle;
+
+      // Mods list
+      var modsHost = document.getElementById('remix-mods');
+      modsHost.innerHTML = '';
+      modList.forEach(function (m, idx) {
+        var row = document.createElement('div');
+        row.className = 'mod-row' + (m.checked ? ' is-checked' : '');
+        var price = m.opt.priceDelta === 0 ? '' : '+' + fmt(m.opt.priceDelta);
+        row.innerHTML =
+          '<div style="display:flex;align-items:center;">' +
+            '<span class="check">✓</span>' +
+            '<span class="name' + (m.checked ? '' : ' is-secondary') + '">' + escapeHtml(m.catTitle + ' · ' + m.opt.name) + (m.catId === 'plate' ? ' (use mine instead)' : '') + '</span>' +
+          '</div>' +
+          '<span class="price' + (m.checked ? '' : ' is-secondary') + '">' + price + '</span>';
+        row.addEventListener('click', function () {
+          m.checked = !m.checked;
+          row.classList.toggle('is-checked', m.checked);
+          row.querySelector('.name').classList.toggle('is-secondary', !m.checked);
+          row.querySelector('.price').classList.toggle('is-secondary', !m.checked);
+          renderTotal();
+        });
+        modsHost.appendChild(row);
+      });
+
+      // Bike pickers
+      var bikesHost = document.getElementById('remix-bikes');
+      bikesHost.innerHTML = '';
+      DATA.BIKES.forEach(function (b) {
+        var pick = document.createElement('div');
+        pick.className = 'bike-pick' + (b.slug === ride.bike ? ' is-selected' : '');
+        pick.dataset.slug = b.slug;
+        pick.innerHTML =
+          '<div class="n">' + b.name.replace(/^The /, '') + '</div>' +
+          '<div class="p">' + fmt(b.basePrice) + '</div>' +
+          (b.slug === ride.bike ? '<div class="p text-accent">their pick</div>' : '');
+        pick.addEventListener('click', function () {
+          remixState.bike = b.slug;
+          bikesHost.querySelectorAll('.bike-pick').forEach(function (p) {
+            p.classList.toggle('is-selected', p === pick);
+          });
+          renderTotal();
+        });
+        bikesHost.appendChild(pick);
+      });
+
+      renderTotal();
+      scrim.classList.add('is-open');
+    }
+
+    function renderTotal() {
+      var bike = DATA.findBike(remixState.bike);
+      var checked = remixState.mods.filter(function (m) { return m.checked; });
+      var modTotal = checked.reduce(function (s, m) { return s + m.opt.priceDelta; }, 0);
+      var total = bike.basePrice + modTotal;
+      document.getElementById('remix-summary-line').textContent = bike.name.replace(/^The /, '') + ' + ' + checked.length + ' mod' + (checked.length === 1 ? '' : 's');
+      document.getElementById('remix-total').textContent = fmt(total);
+      // Show savings vs original ride's bike if applicable
+      var origBike = DATA.findBike(remixState.ride.bike);
+      if (bike.basePrice < origBike.basePrice) {
+        var save = Math.round(((origBike.basePrice - bike.basePrice) / origBike.basePrice) * 100);
+        document.getElementById('remix-saving').textContent = 'save ' + save + '% vs ' + origBike.name.replace(/^The /, '');
+      } else { document.getElementById('remix-saving').textContent = ''; }
+    }
+
+    document.getElementById('remix-close').addEventListener('click', function () { scrim.classList.remove('is-open'); });
+    scrim.addEventListener('click', function (e) { if (e.target === scrim) scrim.classList.remove('is-open'); });
+
+    document.getElementById('remix-build').addEventListener('click', function () {
+      // Build a selections payload from the checked mods, then go to /build.html
+      var selections = {};
+      var color = null;
+      remixState.mods.forEach(function (m) {
+        if (!m.checked) return;
+        if (m.catId === 'frameColor') color = m.opt.id;
+        else selections[m.catId] = m.opt.id;
+      });
+      var payload = btoa(JSON.stringify({ bike: remixState.bike, color: color || 'gloss-orange', selections: selections, plate: '88' }));
+      location.href = 'build.html?bike=' + remixState.bike + '&preload=' + encodeURIComponent(payload);
+    });
+  })();
+  </script>
+</body>
+</html>

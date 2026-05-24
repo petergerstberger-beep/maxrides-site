@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0A0A0A">
+  <title>Reviews — MaxRides</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <style>
+    .rv { padding: var(--space-10) 0 var(--space-24); }
+
+    .rv-summary {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: var(--space-10);
+      align-items: center;
+      padding-bottom: var(--space-8);
+      border-bottom: 1px solid var(--border);
+    }
+    @media (max-width: 720px) {
+      .rv-summary { grid-template-columns: 1fr; gap: var(--space-5); }
+    }
+
+    .rv-filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: var(--space-5) 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .rv-sort-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space-4) 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+    .rv-sort-row select {
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      color: var(--text-primary);
+      padding: 6px 12px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .rv-card {
+      padding: var(--space-6) 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .rv-card__head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: var(--space-2);
+    }
+    .rv-card__stars { color: var(--accent); font-size: 13px; letter-spacing: 2px; }
+    .rv-card__title { font-size: 16px; font-weight: 500; margin-top: var(--space-1); }
+    .rv-card__body { color: var(--text-secondary); margin-top: var(--space-3); font-size: 14px; line-height: 1.6; }
+    .rv-card__photos {
+      display: flex;
+      gap: var(--space-2);
+      margin-top: var(--space-3);
+    }
+    .rv-card__photos > div {
+      width: 56px; height: 56px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-quaternary);
+      font-size: 18px;
+    }
+    .rv-card__meta {
+      margin-top: var(--space-3);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+      font-size: 12px;
+    }
+    .rv-card__author { color: var(--text-primary); font-weight: 500; }
+    .rv-card__verified { color: var(--accent); font-size: 11px; }
+    .rv-card__helpful { color: var(--text-tertiary); font-size: 11px; }
+
+    .write-cta {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-8);
+      margin-top: var(--space-10);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a href="index.html" class="wordmark">maxrides</a>
+      <nav class="site-nav">
+        <a href="index.html">Shop</a>
+        <a href="build.html">Build</a>
+        <a href="rides.html">Rides</a>
+        <a href="reviews.html" class="active">Reviews</a>
+      </nav>
+      <a class="icon-link" href="cart.html"><span>Cart</span><span data-cart-count class="caption"></span></a>
+    </div>
+  </header>
+
+  <main class="rv container-base">
+    <p class="eyebrow">Reviews</p>
+    <h1 class="h1" style="margin-top:var(--space-2);">4.8 stars from 1,243 riders.</h1>
+
+    <div class="rv-summary" style="margin-top:var(--space-6);">
+      <div>
+        <div class="review-pull__num numeric">4.8</div>
+        <div class="review-pull__stars">★★★★★</div>
+        <div class="review-pull__count">1,243 verified reviews</div>
+      </div>
+      <div class="review-pull__bars">
+        <div class="bar-row"><span class="num">5</span><span class="track"><span class="fill" style="width:82%"></span></span><span class="pct">82%</span></div>
+        <div class="bar-row"><span class="num">4</span><span class="track"><span class="fill" style="width:11%"></span></span><span class="pct">11%</span></div>
+        <div class="bar-row"><span class="num">3</span><span class="track"><span class="fill" style="width:4%"></span></span><span class="pct">4%</span></div>
+        <div class="bar-row"><span class="num">2</span><span class="track"><span class="fill" style="width:2%"></span></span><span class="pct">2%</span></div>
+        <div class="bar-row"><span class="num">1</span><span class="track"><span class="fill" style="width:1%"></span></span><span class="pct">1%</span></div>
+      </div>
+    </div>
+
+    <div class="rv-filter-row" id="rv-filters" role="toolbar" aria-label="Filter reviews">
+      <button type="button" class="chip chip--active" data-filter="all">All bikes</button>
+      <button type="button" class="chip" data-filter="dirt-01">Dirt 01</button>
+      <button type="button" class="chip" data-filter="cruiser">Cruiser</button>
+      <button type="button" class="chip" data-filter="starter">Starter</button>
+      <span style="flex:1;"></span>
+      <button type="button" class="chip" data-filter="photos">With photos</button>
+      <button type="button" class="chip" data-filter="verified">Verified</button>
+      <button type="button" class="chip" data-filter="parents">Parents</button>
+    </div>
+
+    <div class="rv-sort-row">
+      <span>Showing <strong id="rv-count">10</strong> of 1,243</span>
+      <label>
+        <span style="margin-right:8px;">Sort:</span>
+        <select id="rv-sort">
+          <option value="helpful">Most helpful</option>
+          <option value="recent">Most recent</option>
+          <option value="high">Highest rated</option>
+          <option value="low">Lowest rated</option>
+        </select>
+      </label>
+    </div>
+
+    <div id="rv-list"></div>
+
+    <div style="margin-top:var(--space-6); text-align:center;">
+      <button class="btn btn--secondary btn--lg">Load 1,233 more reviews</button>
+    </div>
+
+    <div class="write-cta">
+      <p class="eyebrow">Your review</p>
+      <h2 class="h3" style="margin-top:var(--space-2);">Got a MaxRides? Tell us about it.</h2>
+      <p class="body" style="margin-top:var(--space-2); max-width:48ch; margin-inline:auto;">Verified buyers earn $25 in store credit for honest reviews with photos.</p>
+      <div style="margin-top:var(--space-5);">
+        <button class="btn btn--primary btn--lg">Write a review<span class="btn__arrow">→</span></button>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container-wide">
+      <div class="site-footer__legal">
+        <span>&copy; <span data-year>2026</span> MaxRides.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script>
+  (function () {
+    'use strict';
+    var REVIEWS = window.MAXRIDES_DATA.REVIEWS;
+    var list = document.getElementById('rv-list');
+    var sort = document.getElementById('rv-sort');
+    var count = document.getElementById('rv-count');
+    var filters = document.getElementById('rv-filters');
+    var state = { sort: 'helpful', bikeFilter: 'all', tags: [] };
+
+    function render() {
+      var view = REVIEWS.slice();
+      if (state.bikeFilter !== 'all') {
+        view = view.filter(function (r) { return r.verifiedBuild.toLowerCase().indexOf(state.bikeFilter.replace('-', ' ')) !== -1 || r.verifiedBuild.toLowerCase().indexOf(state.bikeFilter) !== -1; });
+      }
+      if (state.tags.indexOf('photos') !== -1) view = view.filter(function (r) { return r.withPhotos; });
+      if (state.tags.indexOf('parents') !== -1) view = view.filter(function (r) { return r.isParent; });
+      // 'verified' tag: all are verified in this dataset
+      switch (state.sort) {
+        case 'recent': view.sort(function (a, b) { return a.id < b.id ? 1 : -1; }); break;
+        case 'high':   view.sort(function (a, b) { return b.stars - a.stars; }); break;
+        case 'low':    view.sort(function (a, b) { return a.stars - b.stars; }); break;
+        default:       view.sort(function (a, b) { return b.helpful - a.helpful; });
+      }
+      list.innerHTML = '';
+      view.forEach(function (r) { list.appendChild(card(r)); });
+      count.textContent = view.length;
+    }
+
+    function card(r) {
+      var stars = '';
+      for (var i = 0; i < 5; i++) stars += i < r.stars ? '★' : '☆';
+      var photoHtml = '';
+      if (r.withPhotos) {
+        photoHtml = '<div class="rv-card__photos">' +
+          '<div>▦</div><div>▦</div><div>▦</div></div>';
+      }
+      var div = document.createElement('article');
+      div.className = 'rv-card';
+      div.innerHTML =
+        '<div class="rv-card__head">' +
+          '<span class="rv-card__stars" aria-label="' + r.stars + ' stars">' + stars + '</span>' +
+          '<span class="caption">' + r.when + '</span>' +
+        '</div>' +
+        '<h3 class="rv-card__title">' + r.title + '</h3>' +
+        '<p class="rv-card__body">' + r.body + '</p>' +
+        photoHtml +
+        '<div class="rv-card__meta">' +
+          '<div>' +
+            '<span class="rv-card__author">' + r.author + '</span> ' +
+            '<span class="text-tertiary"> · ' + r.age + ' · ' + r.city + '</span><br>' +
+            '<span class="rv-card__verified">✓ Verified ' + r.verifiedBuild + '</span>' +
+          '</div>' +
+          '<span class="rv-card__helpful">♡ helpful · ' + r.helpful + '</span>' +
+        '</div>';
+      return div;
+    }
+
+    filters.addEventListener('click', function (e) {
+      var btn = e.target.closest('.chip');
+      if (!btn) return;
+      var f = btn.getAttribute('data-filter');
+      if (['all','dirt-01','cruiser','starter'].indexOf(f) !== -1) {
+        state.bikeFilter = f;
+        filters.querySelectorAll('[data-filter="all"], [data-filter="dirt-01"], [data-filter="cruiser"], [data-filter="starter"]').forEach(function (b) {
+          b.classList.toggle('chip--active', b === btn);
+        });
+      } else {
+        var idx = state.tags.indexOf(f);
+        if (idx === -1) { state.tags.push(f); btn.classList.add('chip--active'); }
+        else { state.tags.splice(idx, 1); btn.classList.remove('chip--active'); }
+      }
+      render();
+    });
+    sort.addEventListener('change', function () { state.sort = sort.value; render(); });
+
+    document.addEventListener('DOMContentLoaded', render);
+  })();
+  </script>
+</body>
+</html>

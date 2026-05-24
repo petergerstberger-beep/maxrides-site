@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Order placed — MaxRides</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <style>
+    .confirm { padding: var(--space-16) 0; }
+    .check-mark {
+      width: 64px;
+      height: 64px;
+      border-radius: var(--radius-full);
+      background: var(--accent);
+      color: var(--text-on-accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      margin-bottom: var(--space-6);
+    }
+    .order-meta {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+      margin-top: var(--space-8);
+    }
+    .order-meta__head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 12px;
+      color: var(--text-tertiary);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding-bottom: var(--space-3);
+      border-bottom: 1px solid var(--border);
+    }
+    .order-line {
+      display: flex;
+      justify-content: space-between;
+      padding: var(--space-4) 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .order-line:last-child { border-bottom: none; }
+    .order-line h3 { font-size: 15px; font-weight: 500; }
+    .order-line p { color: var(--text-secondary); font-size: 12px; margin-top: 2px; }
+    .order-line .price { font-size: 15px; font-weight: 500; color: var(--accent); font-variant-numeric: tabular-nums; }
+    .demo-note {
+      background: rgba(255, 90, 31, 0.08);
+      border: 1px solid rgba(255, 90, 31, 0.3);
+      border-radius: var(--radius-md);
+      padding: var(--space-4);
+      margin-top: var(--space-6);
+      color: var(--accent);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a href="index.html" class="wordmark">maxrides</a>
+      <nav class="site-nav">
+        <a href="index.html">Shop</a>
+        <a href="build.html">Build</a>
+        <a href="rides.html">Rides</a>
+        <a href="reviews.html">Reviews</a>
+      </nav>
+      <a class="icon-link" href="cart.html">
+        <span>Cart</span>
+        <span data-cart-count class="caption"></span>
+      </a>
+    </div>
+  </header>
+
+  <main class="confirm container-narrow">
+    <div class="check-mark" aria-hidden="true">✓</div>
+    <p class="eyebrow">Order placed</p>
+    <h1 class="h1" style="margin-top:var(--space-2);">Your bike is on its way.</h1>
+    <p class="body-lg" style="margin-top:var(--space-3);">Confirmation email sent. Tracking will arrive within 24 hours. Estimated delivery: 5–7 business days.</p>
+
+    <div id="order-meta-host"></div>
+
+    <p class="demo-note">
+      <strong>Demo mode:</strong> this is a preview build — no real charge was processed and no bike will ship. The Stripe integration is wired up but currently set to test mode. Real payments turn on when you’re ready to launch.
+    </p>
+
+    <div style="display:flex; gap:var(--space-3); margin-top:var(--space-8); flex-wrap:wrap;">
+      <a href="index.html" class="btn btn--primary btn--lg">Back to shop<span class="btn__arrow">→</span></a>
+      <a href="rides.html" class="btn btn--secondary btn--lg">See what others built</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container-wide">
+      <div class="site-footer__legal">
+        <span>&copy; <span data-year>2026</span> MaxRides.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/bikes.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script>
+  (function () {
+    'use strict';
+    var raw = localStorage.getItem('maxrides.lastOrder');
+    if (!raw) return;
+    var order = JSON.parse(raw);
+    var host = document.getElementById('order-meta-host');
+    var orderNo = 'MR-' + new Date(order.at).getTime().toString().slice(-7);
+    var lines = order.items.map(function (item) {
+      var t = item.lineItems.reduce(function (s, li) { return s + li.price; }, 0) * (item.qty || 1);
+      return '<div class="order-line">' +
+               '<div>' +
+                 '<h3>' + item.bikeName + '</h3>' +
+                 '<p>' + item.colorName + ' &middot; Plate #' + item.plate + ' &middot; qty ' + (item.qty || 1) + '</p>' +
+               '</div>' +
+               '<div class="price">$' + t.toLocaleString() + '</div>' +
+             '</div>';
+    }).join('');
+    host.innerHTML =
+      '<div class="order-meta">' +
+        '<div class="order-meta__head">' +
+          '<span>Order ' + orderNo + '</span>' +
+          '<span>' + new Date(order.at).toLocaleDateString() + '</span>' +
+        '</div>' +
+        lines +
+      '</div>';
+    // Clear cart after successful order
+    localStorage.removeItem('maxrides.cart');
+    if (window.MAXRIDES && window.MAXRIDES.refreshCartBadge) window.MAXRIDES.refreshCartBadge();
+  })();
+  </script>
+</body>
+</html>

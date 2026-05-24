@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0A0A0A">
+  <title>Build your MaxRides — Configurator</title>
+  <meta name="description" content="Configure your MaxRides bike across 21 component categories with real-world Sur-Ron, Talaria, and Super73-grade parts.">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <style>
+    /* Builder-specific layout */
+    .builder { padding-bottom: 96px; }
+
+    .builder-hero {
+      position: sticky;
+      top: 52px;
+      z-index: 20;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+    }
+    .builder-hero__inner {
+      max-width: var(--container-wide);
+      margin: 0 auto;
+      padding: var(--space-4) var(--space-5) var(--space-5);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: var(--space-5);
+      align-items: center;
+    }
+    .builder-hero__stage {
+      background: radial-gradient(ellipse at center, #181818 0%, #0A0A0A 70%);
+      border-radius: var(--radius-lg);
+      padding: var(--space-3) var(--space-4);
+      height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .builder-hero__stage svg { width: 100%; height: 100%; }
+    .builder-hero__meta { text-align: right; }
+    .builder-hero__bike {
+      font-size: 13px;
+      color: var(--text-secondary);
+      letter-spacing: 0.02em;
+    }
+    .builder-hero__total {
+      font-size: 26px;
+      font-weight: 500;
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+    }
+    .builder-hero__pill-row {
+      max-width: var(--container-wide);
+      margin: 0 auto;
+      padding: 0 var(--space-5) var(--space-3);
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .builder-hero__pill-row::-webkit-scrollbar { display: none; }
+    .builder-hero__pill-row .chip { white-space: nowrap; cursor: pointer; }
+    @media (max-width: 720px) {
+      .builder-hero__inner { grid-template-columns: 1fr; padding: var(--space-3) var(--space-4); gap: var(--space-3); }
+      .builder-hero__stage { height: 110px; }
+      .builder-hero__meta { text-align: left; display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-3); }
+      .builder-hero__total { font-size: 22px; }
+    }
+
+    .builder-section {
+      max-width: var(--container-wide);
+      margin: 0 auto;
+      padding: var(--space-8) var(--space-5);
+      border-bottom: 1px solid var(--border);
+      scroll-margin-top: 240px;
+    }
+    .builder-section__head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: var(--space-4);
+      margin-bottom: var(--space-5);
+    }
+    .builder-section__head .selected-name {
+      font-size: 13px;
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+    .builder-section__blurb {
+      color: var(--text-secondary);
+      font-size: 14px;
+      margin: -8px 0 var(--space-5);
+      max-width: 50ch;
+    }
+
+    .option-grid {
+      display: grid;
+      gap: var(--space-3);
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    }
+    .option-grid--narrow { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+
+    .option {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-4);
+      cursor: pointer;
+      transition:
+        border-color var(--dur-fast) var(--ease-out),
+        background var(--dur-fast) var(--ease-out),
+        transform var(--dur-fast) var(--ease-out);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+    .option:hover { border-color: var(--text-tertiary); }
+    .option.is-selected {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent) inset;
+    }
+    .option__head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: var(--space-3);
+    }
+    .option__title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+      line-height: var(--lh-snug);
+    }
+    .option__brand { font-size: 11px; color: var(--text-tertiary); margin-top: 2px; }
+    .option__price {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--accent);
+      white-space: nowrap;
+    }
+    .option__price.is-included { color: var(--text-tertiary); }
+    .option__summary { font-size: 12px; color: var(--text-secondary); line-height: var(--lh-normal); }
+    .option__specs {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 3px 12px;
+      font-size: 11px;
+      border-top: 1px solid var(--border);
+      padding-top: var(--space-3);
+    }
+    .option__specs dt { color: var(--text-tertiary); text-transform: capitalize; }
+    .option__specs dd { color: var(--text-primary); }
+
+    /* Color swatches for FRAME_COLORS */
+    .color-row {
+      display: flex;
+      gap: var(--space-3);
+      flex-wrap: wrap;
+    }
+    .color-swatch-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+    .color-swatch-btn .swatch { width: 44px; height: 44px; }
+    .color-swatch-btn .name { font-size: 10px; color: var(--text-tertiary); }
+    .color-swatch-btn.is-selected .name { color: var(--text-primary); }
+    .color-swatch-btn.is-selected .swatch { border-color: var(--text-primary); transform: scale(1.05); }
+    .color-swatch-btn .delta { font-size: 9px; color: var(--accent); }
+
+    /* Custom plate number input */
+    .plate-input {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      margin-top: var(--space-4);
+    }
+    .plate-input label { font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.06em; }
+    .plate-input input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      color: var(--text-primary);
+      font-size: 16px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-align: right;
+    }
+    .plate-input input::placeholder { color: var(--text-quaternary); }
+
+    /* Builder footer (sticky bottom) */
+    .builder-footer {
+      position: fixed;
+      left: 0; right: 0; bottom: 0;
+      z-index: 30;
+      background: rgba(10,10,10,0.92);
+      backdrop-filter: saturate(140%) blur(18px);
+      border-top: 1px solid var(--border);
+    }
+    .builder-footer__inner {
+      max-width: var(--container-wide);
+      margin: 0 auto;
+      padding: var(--space-3) var(--space-5);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-4);
+    }
+    .builder-footer__total .label { font-size: 10px; color: var(--text-tertiary); letter-spacing: 0.06em; text-transform: uppercase; }
+    .builder-footer__total .value { font-size: 18px; font-weight: 500; color: var(--text-primary); font-variant-numeric: tabular-nums; }
+    .builder-footer__actions { display: flex; gap: var(--space-2); }
+    @media (max-width: 480px) {
+      .builder-footer__actions .btn--save { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a href="index.html" class="wordmark" aria-label="MaxRides home">maxrides</a>
+      <nav class="site-nav" aria-label="Primary">
+        <a href="index.html">Shop</a>
+        <a href="build.html" class="active">Build</a>
+        <a href="rides.html">Rides</a>
+        <a href="reviews.html">Reviews</a>
+      </nav>
+      <a class="icon-link" href="cart.html" aria-label="Cart">
+        <span>Cart</span>
+        <span data-cart-count class="caption"></span>
+      </a>
+    </div>
+  </header>
+
+  <main class="builder">
+
+    <!-- Sticky hero: bike preview + live total -->
+    <div class="builder-hero">
+      <div class="builder-hero__inner">
+        <div class="builder-hero__stage" id="builder-stage" data-bike="dirt-01" data-accent="#FF5A1F"></div>
+        <div class="builder-hero__meta">
+          <div class="builder-hero__bike" id="builder-bike-label">Building &middot; The Dirt 01</div>
+          <div class="builder-hero__total" id="builder-total">$2,499</div>
+        </div>
+      </div>
+      <div class="builder-hero__pill-row" id="bike-pill-row" aria-label="Switch bike">
+        <button type="button" class="chip chip--active" data-bike-pill="dirt-01">The Dirt 01</button>
+        <button type="button" class="chip" data-bike-pill="cruiser">The Cruiser</button>
+        <button type="button" class="chip" data-bike-pill="starter">The Starter</button>
+      </div>
+    </div>
+
+    <!-- ===== 01 · Frame color (custom — swatches) ===== -->
+    <section class="builder-section" id="cat-color">
+      <div class="builder-section__head">
+        <p class="eyebrow">01 · Frame color</p>
+        <span class="selected-name" id="selected-color">Gloss orange</span>
+      </div>
+      <p class="builder-section__blurb">Solid colors. Picks the base layer of the paint job.</p>
+      <div class="color-row" id="color-row"></div>
+    </section>
+
+    <!-- The other 20 categories are rendered by build.js into this container -->
+    <div id="categories-host"></div>
+
+  </main>
+
+  <!-- Sticky footer -->
+  <div class="builder-footer">
+    <div class="builder-footer__inner">
+      <div class="builder-footer__total">
+        <div class="label">Your build</div>
+        <div class="value" id="footer-total">$2,499</div>
+      </div>
+      <div class="builder-footer__actions">
+        <button type="button" class="btn btn--secondary btn--save" id="save-wishlist-btn">Save to wishlist</button>
+        <button type="button" class="btn btn--primary" id="add-to-cart-btn">Add to cart<span class="btn__arrow">→</span></button>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/bikes.js"></script>
+  <script src="assets/js/build.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

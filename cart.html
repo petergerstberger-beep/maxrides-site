@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0A0A0A">
+  <title>Cart — MaxRides</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <style>
+    .cart { padding: var(--space-10) 0 var(--space-24); }
+    .cart-empty { text-align: center; padding: var(--space-20) var(--space-4); }
+    .cart-empty .body-lg { max-width: 36ch; margin: var(--space-3) auto 0; }
+
+    .cart-item {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: var(--space-6);
+      padding: var(--space-6) 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .cart-item__thumb {
+      background: radial-gradient(ellipse at center, #181818 0%, #0A0A0A 70%);
+      border-radius: var(--radius-lg);
+      padding: var(--space-3);
+      align-self: start;
+    }
+    .cart-item__thumb svg { width: 100%; height: auto; }
+    .cart-item__label { color: var(--accent); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; }
+    .cart-item__name  { font-size: 20px; font-weight: 500; margin-top: 2px; }
+    .cart-item__sub   { color: var(--text-secondary); font-size: 13px; margin-top: 4px; }
+    .cart-item__lines {
+      margin-top: var(--space-4);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 4px 16px;
+      font-size: 12px;
+    }
+    .cart-item__lines dt { color: var(--text-tertiary); }
+    .cart-item__lines dt.is-base { color: var(--text-primary); }
+    .cart-item__lines dd { text-align: right; color: var(--text-primary); font-variant-numeric: tabular-nums; }
+    .cart-item__total {
+      grid-column: 1 / -1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: var(--space-3);
+      border-top: 1px solid var(--border);
+      margin-top: var(--space-3);
+    }
+    .cart-item__actions { display: flex; gap: var(--space-3); margin-top: var(--space-4); }
+
+    .qty-stepper {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-3);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-md);
+      padding: 4px 12px;
+    }
+    .qty-stepper button {
+      width: 22px;
+      height: 22px;
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      background: var(--surface);
+      transition: background var(--dur-fast) var(--ease-out);
+    }
+    .qty-stepper button:hover { background: var(--surface-hover); }
+
+    .summary {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      padding: var(--space-6);
+      margin-top: var(--space-8);
+    }
+    .summary__row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 6px 0;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+    .summary__row .v { color: var(--text-primary); font-variant-numeric: tabular-nums; }
+    .summary__row--total {
+      border-top: 1px solid var(--border);
+      margin-top: var(--space-3);
+      padding-top: var(--space-4);
+    }
+    .summary__row--total .l { color: var(--text-primary); font-size: 16px; font-weight: 500; }
+    .summary__row--total .v { color: var(--accent); font-size: 26px; font-weight: 500; }
+    .summary__row--accent .v { color: var(--accent); }
+    .summary__financing { color: var(--text-tertiary); font-size: 11px; text-align: right; margin-top: var(--space-2); }
+
+    .checkout-actions { display: grid; gap: var(--space-3); margin-top: var(--space-6); }
+
+    .trust-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-3);
+      margin-top: var(--space-8);
+      padding-top: var(--space-6);
+      border-top: 1px solid var(--border);
+    }
+    .trust-row > div {
+      text-align: center;
+      font-size: 11px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+    .trust-row > div span { display: block; color: var(--accent); font-size: 16px; margin-bottom: 4px; }
+
+    @media (max-width: 720px) {
+      .cart-item { grid-template-columns: 1fr; }
+      .cart-item__thumb { width: 60%; }
+      .trust-row { grid-template-columns: 1fr 1fr; gap: var(--space-4); }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a href="index.html" class="wordmark">maxrides</a>
+      <nav class="site-nav">
+        <a href="index.html">Shop</a>
+        <a href="build.html">Build</a>
+        <a href="rides.html">Rides</a>
+        <a href="reviews.html">Reviews</a>
+      </nav>
+      <a class="icon-link" href="cart.html" aria-label="Cart">
+        <span>Cart</span>
+        <span data-cart-count class="caption"></span>
+      </a>
+    </div>
+  </header>
+
+  <main class="cart container-base">
+    <p class="eyebrow">Your cart</p>
+    <h1 class="h1" id="cart-title" style="margin-top:var(--space-2);">Loading your build…</h1>
+
+    <div id="cart-items"></div>
+
+    <div id="cart-summary"></div>
+
+    <div id="cart-empty" class="cart-empty" hidden>
+      <p class="eyebrow">Empty</p>
+      <h2 class="h2" style="margin-top:var(--space-2);">Nothing in here yet.</h2>
+      <p class="body-lg">Pick a bike, configure it, and add it to your cart. Or remix one from the Rides feed.</p>
+      <div style="margin-top:var(--space-6); display:flex; gap:var(--space-3); justify-content:center;">
+        <a href="index.html" class="btn btn--primary btn--lg">Shop bikes<span class="btn__arrow">→</span></a>
+        <a href="rides.html" class="btn btn--secondary btn--lg">Browse Rides</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container-wide">
+      <div class="site-footer__legal">
+        <span>&copy; <span data-year>2026</span> MaxRides.</span>
+        <span><a href="index.html">Back to home</a></span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/bikes.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script>
+  (function () {
+    'use strict';
+    var DATA = window.MAXRIDES_DATA;
+    var titleEl = document.getElementById('cart-title');
+    var itemsEl = document.getElementById('cart-items');
+    var summaryEl = document.getElementById('cart-summary');
+    var emptyEl = document.getElementById('cart-empty');
+    var raw = localStorage.getItem('maxrides.cart');
+    var cart = raw ? JSON.parse(raw) : [];
+
+    function fmt(n) { return '$' + n.toLocaleString('en-US'); }
+    function escapeHtml(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]; }); }
+
+    function renderItem(item, idx) {
+      var div = document.createElement('article');
+      div.className = 'cart-item';
+      var lines = item.lineItems.map(function (li, i) {
+        var cls = i === 0 ? 'is-base' : '';
+        return '<dt class="' + cls + '">' + escapeHtml(li.label) + '</dt><dd>' + fmt(li.price) + '</dd>';
+      }).join('');
+      var itemTotal = item.lineItems.reduce(function (s, li) { return s + li.price; }, 0);
+
+      div.innerHTML =
+        '<div class="cart-item__thumb">' + window.BIKE_SVG[item.bike](item.colorHex || '#FF5A1F') + '</div>' +
+        '<div>' +
+          '<div class="cart-item__label">' + escapeHtml(item.bikeName.replace(/^The /, '')) + '</div>' +
+          '<div class="cart-item__name">' + escapeHtml(item.bikeName) + '</div>' +
+          '<div class="cart-item__sub">Color: ' + escapeHtml(item.colorName) + ' &middot; Plate #' + escapeHtml(item.plate) + '</div>' +
+          '<dl class="cart-item__lines">' + lines + '</dl>' +
+          '<div class="cart-item__total">' +
+            '<div class="qty-stepper" aria-label="Quantity">' +
+              '<button type="button" data-qty-down>−</button>' +
+              '<span data-qty>' + (item.qty || 1) + '</span>' +
+              '<button type="button" data-qty-up>+</button>' +
+            '</div>' +
+            '<div><span class="text-tertiary body-sm">Item total</span> <strong style="font-size:18px;margin-left:8px;color:var(--accent);">' + fmt(itemTotal * (item.qty || 1)) + '</strong></div>' +
+          '</div>' +
+          '<div class="cart-item__actions">' +
+            '<a class="btn btn--secondary btn--sm" href="build.html?bike=' + encodeURIComponent(item.bike) + '&preload=' + encodeURIComponent(btoa(JSON.stringify({ bike: item.bike, color: item.color, selections: item.selections, plate: item.plate }))) + '">Edit build</a>' +
+            '<button type="button" class="btn btn--ghost btn--sm" data-remove>Remove</button>' +
+          '</div>' +
+        '</div>';
+
+      div.querySelector('[data-qty-up]').addEventListener('click', function () { cart[idx].qty = (cart[idx].qty || 1) + 1; persistAndRerender(); });
+      div.querySelector('[data-qty-down]').addEventListener('click', function () { cart[idx].qty = Math.max(1, (cart[idx].qty || 1) - 1); persistAndRerender(); });
+      div.querySelector('[data-remove]').addEventListener('click', function () { cart.splice(idx, 1); persistAndRerender(); });
+
+      return div;
+    }
+
+    function calcSubtotal() {
+      return cart.reduce(function (sum, item) {
+        var t = item.lineItems.reduce(function (s, li) { return s + li.price; }, 0);
+        return sum + t * (item.qty || 1);
+      }, 0);
+    }
+
+    function renderSummary() {
+      var subtotal = calcSubtotal();
+      var taxRate = 0.0775;
+      var shippingFree = subtotal >= 999;
+      var shipping = shippingFree ? 0 : 49;
+      var tax = Math.round(subtotal * taxRate);
+      var total = subtotal + shipping + tax;
+      var affirm = Math.ceil(total / 4);
+      summaryEl.innerHTML =
+        '<div class="summary">' +
+          '<p class="eyebrow">Order summary</p>' +
+          '<div class="summary__row" style="margin-top:var(--space-3);"><span class="l">Subtotal</span><span class="v">' + fmt(subtotal) + '</span></div>' +
+          '<div class="summary__row summary__row--accent"><span class="l">Shipping</span><span class="v">' + (shippingFree ? 'FREE' : fmt(shipping)) + '</span></div>' +
+          '<div class="summary__row"><span class="l">Tax (est.)</span><span class="v">' + fmt(tax) + '</span></div>' +
+          '<div class="summary__row summary__row--total"><span class="l">Total</span><span class="v">' + fmt(total) + '</span></div>' +
+          '<p class="summary__financing">or 4 payments of ' + fmt(affirm) + ' with Affirm</p>' +
+          '<div class="checkout-actions">' +
+            '<button class="btn btn--primary btn--lg" id="checkout-btn">Checkout securely<span class="btn__arrow">→</span></button>' +
+            '<button class="btn btn--secondary btn--lg" id="apple-pay-btn">Pay with apple pay</button>' +
+          '</div>' +
+          '<div class="trust-row">' +
+            '<div><span>✓</span>Free shipping<br>over $999</div>' +
+            '<div><span>⛨</span>2-yr<br>warranty</div>' +
+            '<div><span>↩</span>30-day<br>returns</div>' +
+            '<div><span>⚿</span>Secure<br>checkout</div>' +
+          '</div>' +
+        '</div>';
+      document.getElementById('checkout-btn').addEventListener('click', goCheckout);
+      document.getElementById('apple-pay-btn').addEventListener('click', goCheckout);
+    }
+
+    function goCheckout() {
+      // For v1: simulate checkout success → confirmation page with order details
+      var payload = { items: cart, subtotal: calcSubtotal(), at: Date.now() };
+      try { localStorage.setItem('maxrides.lastOrder', JSON.stringify(payload)); } catch (e) {}
+      window.location.href = 'order-confirmation.html';
+    }
+
+    function persistAndRerender() {
+      localStorage.setItem('maxrides.cart', JSON.stringify(cart));
+      if (window.MAXRIDES && window.MAXRIDES.refreshCartBadge) window.MAXRIDES.refreshCartBadge();
+      render();
+    }
+
+    function render() {
+      itemsEl.innerHTML = '';
+      if (!cart.length) {
+        titleEl.style.display = 'none';
+        summaryEl.innerHTML = '';
+        emptyEl.hidden = false;
+        return;
+      }
+      emptyEl.hidden = true;
+      titleEl.style.display = '';
+      var count = cart.reduce(function (s, i) { return s + (i.qty || 1); }, 0);
+      titleEl.textContent = count + (count === 1 ? ' item.' : ' items.');
+      cart.forEach(function (item, idx) {
+        itemsEl.appendChild(renderItem(item, idx));
+      });
+      renderSummary();
+    }
+
+    document.addEventListener('DOMContentLoaded', render);
+  })();
+  </script>
+</body>
+</html>
