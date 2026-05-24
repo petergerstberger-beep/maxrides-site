@@ -94,17 +94,17 @@
       silhouette: 'dirt',
       photoUrl: 'https://lithiumpowersports.com/cdn/shop/files/stark-varg-mx-1-2-electric-motocross-bike-60-80-hp-off-road-red-erides-691.webp?v=1773489192',
       tagline: 'The supercar of electric dirt bikes.',
-      heroCopy: '80 hp. 7.2 kWh battery (20% more range than MX 1.0). Arkenstone handlebar dashboard. Pros race pro motocross on it.',
+      heroCopy: '80 hp. GPS-tested 100+ mph. 7.2 kWh battery. Arkenstone handlebar dashboard. Pros race pro motocross on it.',
       basePrice: 13490,
       rating: 5.0,
       reviewCount: 142,
       specs: {
-        topSpeed: '75 mph (rider-tunable)',
-        rideTime: '1.3–6 hr depending on rider + terrain',
-        motor: '80 hp peak (Alpha) / 60 hp (Standard)',
+        topSpeed: '75 mph official / 100+ mph GPS-tested',
+        torque: '938 N·m at the rear wheel',
+        acceleration: '0–50 mph in ~3.2 sec',
+        motor: '80 hp / 60 kW peak (Alpha) · 60 hp (Standard)',
         weight: '260 lb (118 kg)',
-        battery: '7.2 kWh Li-ion',
-        suspension: 'KYB AOS factory race'
+        battery: '7.2 kWh Li-ion (1.3–6 hr ride time)'
       }
     },
     {
