@@ -270,32 +270,25 @@
     var seatY = P.seatH;
     var motorY = P.wheelR + 0.06;
 
-    // ---- Frame (extruded side profile) ----
-    // Define the bike's outer plastic shroud + tank shape (side view).
-    // Coordinate system: X = front (positive) to rear (negative); Y = up.
+    // ---- Side shroud (curved profile via bezier) ----
+    // X = front(+) to rear(-), Y = up. Bezier curves make it look like a real shroud.
     var shape = new THREE.Shape();
-    shape.moveTo(0.50, 1.20);                              // front-top of shroud
-    shape.lineTo(0.85, 1.05);                              // up-front toward fork crown
-    shape.lineTo(0.62, 0.78);                              // down-front to engine top
-    shape.lineTo(0.22, 0.68);                              // engine top-front
-    shape.lineTo(-0.10, 0.65);                             // engine top-mid
-    shape.lineTo(-0.30, 0.75);                             // up under seat
-    shape.lineTo(-0.55, 0.92);                             // back into rear shroud
-    shape.lineTo(-0.85, seatY - 0.02);                     // tail
-    shape.lineTo(-0.85, seatY + 0.05);                     // tail top
-    shape.lineTo(-0.55, seatY + 0.04);                     // seat back
-    shape.lineTo(-0.10, seatY + 0.02);                     // seat front
-    shape.lineTo(0.20, seatY - 0.03);                      // tank back
-    shape.lineTo(0.45, seatY - 0.10);                      // tank top sloping into shroud
-    shape.lineTo(0.50, 1.20);                              // close
-
+    shape.moveTo(0.92, 1.10);                              // front-top corner near fork crown
+    shape.bezierCurveTo(0.95, 1.05, 0.90, 0.95, 0.80, 0.88); // curve down front
+    shape.bezierCurveTo(0.70, 0.78, 0.55, 0.72, 0.40, 0.70); // along shroud bottom
+    shape.bezierCurveTo(0.10, 0.66, -0.18, 0.68, -0.35, 0.78); // engine top + under-seat
+    shape.bezierCurveTo(-0.55, 0.92, -0.75, seatY - 0.05, -0.95, seatY + 0.02); // rear tail rise
+    shape.bezierCurveTo(-1.00, seatY + 0.10, -0.95, seatY + 0.10, -0.80, seatY + 0.05); // tail top
+    shape.bezierCurveTo(-0.55, seatY + 0.06, -0.20, seatY + 0.05, 0.10, seatY - 0.04); // seat/tank top
+    shape.bezierCurveTo(0.35, seatY - 0.12, 0.55, seatY - 0.14, 0.72, 1.20);  // tank into front shroud
+    shape.bezierCurveTo(0.85, 1.25, 0.92, 1.18, 0.92, 1.10);   // close
     var extrudeSettings = {
-      depth: 0.18,
+      depth: 0.20,
       bevelEnabled: true,
-      bevelSegments: 2,
-      bevelSize: 0.012,
-      bevelThickness: 0.012,
-      curveSegments: 18
+      bevelSegments: 4,
+      bevelSize: 0.018,
+      bevelThickness: 0.018,
+      curveSegments: 28
     };
 
     function makeShroudSide(z) {
@@ -303,10 +296,37 @@
       var mesh = new THREE.Mesh(geom, sideShroudMat);
       mesh.position.z = z - extrudeSettings.depth / 2;
       mesh.castShadow = true;
+      mesh.receiveShadow = true;
       return mesh;
     }
-    bikeGroup.add(makeShroudSide(0.18));
-    bikeGroup.add(makeShroudSide(-0.18));
+    bikeGroup.add(makeShroudSide(0.20));
+    bikeGroup.add(makeShroudSide(-0.20));
+
+    // ---- Gas tank cap area (subtle dome on top of the tank) ----
+    var tankCap = new THREE.Mesh(
+      new THREE.SphereGeometry(0.10, 18, 12, 0, Math.PI * 2, 0, Math.PI / 2),
+      new THREE.MeshStandardMaterial({ color: 0x1a1a1d, roughness: 0.4, metalness: 0.6 })
+    );
+    tankCap.position.set(0.38, seatY - 0.05, 0);
+    bikeGroup.add(tankCap);
+
+    // ---- Side number plates (one per side, slightly offset from shroud) ----
+    var nplateShape = new THREE.Shape();
+    nplateShape.moveTo(0, 0.13);
+    nplateShape.bezierCurveTo(0.18, 0.15, 0.32, 0.10, 0.32, 0);
+    nplateShape.bezierCurveTo(0.32, -0.10, 0.18, -0.15, 0, -0.13);
+    nplateShape.bezierCurveTo(-0.18, -0.15, -0.32, -0.10, -0.32, 0);
+    nplateShape.bezierCurveTo(-0.32, 0.10, -0.18, 0.15, 0, 0.13);
+    var nplateGeom = new THREE.ExtrudeGeometry(nplateShape, {
+      depth: 0.015, bevelEnabled: true, bevelSize: 0.005, bevelThickness: 0.005, curveSegments: 14
+    });
+    var nplateMat = new THREE.MeshStandardMaterial({ color: 0xfafafa, roughness: 0.45, metalness: 0.05 });
+    for (var sn = -1; sn <= 1; sn += 2) {
+      var np = new THREE.Mesh(nplateGeom, nplateMat);
+      np.position.set(-0.55, seatY - 0.05, sn * 0.215);
+      np.rotation.y = sn > 0 ? 0 : Math.PI;
+      bikeGroup.add(np);
+    }
 
     // Frame steel (tube structure under the shrouds, visible at edges)
     // Use cylinders to simulate steel tubes
@@ -503,14 +523,144 @@
     rearFender.name = 'rearFender';
     bikeGroup.add(rearFender);
 
-    // Front fender (small over front wheel)
+    // Front fender (small curved guard over front wheel)
     var ff = new THREE.Mesh(
-      new THREE.TorusGeometry(P.wheelR + 0.05, 0.04, 6, 12, Math.PI * 0.6),
+      new THREE.TorusGeometry(P.wheelR + 0.05, 0.04, 8, 20, Math.PI * 0.7),
       sideShroudMat
     );
     ff.position.set(halfWB, P.wheelR + 0.06, 0);
-    ff.rotation.set(Math.PI / 2, Math.PI / 2, 0.6);
+    ff.rotation.set(Math.PI / 2, Math.PI / 2, 0.5);
+    ff.castShadow = true;
     bikeGroup.add(ff);
+
+    // ---- Brake caliper (red) on front fork lower ----
+    var caliperMat = new THREE.MeshStandardMaterial({ color: 0xc81a1a, roughness: 0.4, metalness: 0.55 });
+    var caliper = new THREE.Mesh(
+      new THREE.BoxGeometry(0.08, 0.12, 0.06),
+      caliperMat
+    );
+    caliper.position.set(halfWB + 0.10, P.wheelR + 0.05, 0.13);
+    caliper.castShadow = true;
+    bikeGroup.add(caliper);
+
+    // ---- Rear sprocket (visible behind rear wheel) ----
+    var sprocketMat = new THREE.MeshStandardMaterial({ color: 0xaaaab0, roughness: 0.3, metalness: 0.92 });
+    var sprocket = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.12, 0.12, 0.012, 28),
+      sprocketMat
+    );
+    sprocket.position.set(-halfWB, P.wheelR, -0.13);
+    sprocket.rotation.x = Math.PI / 2;
+    bikeGroup.add(sprocket);
+    // Sprocket teeth (thin radial bars)
+    var teethGeom = new THREE.BoxGeometry(0.02, 0.012, 0.025);
+    for (var ti = 0; ti < 14; ti++) {
+      var tooth = new THREE.Mesh(teethGeom, sprocketMat);
+      var ta = (ti / 14) * Math.PI * 2;
+      tooth.position.set(-halfWB + Math.cos(ta) * 0.13, P.wheelR + Math.sin(ta) * 0.13, -0.13);
+      tooth.rotation.z = ta;
+      bikeGroup.add(tooth);
+    }
+
+    // ---- Engine sprocket (smaller, near motor) ----
+    var eSprocket = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.055, 0.055, 0.014, 18),
+      sprocketMat
+    );
+    eSprocket.position.set(-0.08, motorY, -0.13);
+    eSprocket.rotation.x = Math.PI / 2;
+    bikeGroup.add(eSprocket);
+
+    // ---- Chain (a series of small dark cylinders along the chainline) ----
+    // Top run: from engine sprocket to rear sprocket
+    var chainMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1d, roughness: 0.55, metalness: 0.7 });
+    function chainSegment(x1, y1, x2, y2, z) {
+      var dx = x2 - x1, dy = y2 - y1;
+      var len = Math.hypot(dx, dy);
+      var geom = new THREE.CylinderGeometry(0.012, 0.012, len, 6);
+      var m = new THREE.Mesh(geom, chainMat);
+      m.position.set((x1 + x2) / 2, (y1 + y2) / 2, z);
+      m.rotation.z = Math.atan2(dy, dx) - Math.PI / 2;
+      return m;
+    }
+    bikeGroup.add(chainSegment(-0.08, motorY + 0.05, -halfWB, P.wheelR + 0.12, -0.13)); // top run
+    bikeGroup.add(chainSegment(-0.08, motorY - 0.05, -halfWB, P.wheelR - 0.12, -0.13)); // bottom run
+
+    // ---- Foot pegs (small platforms either side of motor) ----
+    var pegMat = new THREE.MeshStandardMaterial({ color: 0x44444a, roughness: 0.5, metalness: 0.85 });
+    for (var sp = -1; sp <= 1; sp += 2) {
+      var peg = new THREE.Mesh(
+        new THREE.BoxGeometry(0.13, 0.025, 0.05),
+        pegMat
+      );
+      peg.position.set(-0.05, motorY - 0.18, sp * 0.25);
+      peg.castShadow = true;
+      bikeGroup.add(peg);
+    }
+
+    // ---- Brake pedal + shift lever ----
+    var bpMat = new THREE.MeshStandardMaterial({ color: 0x9a9a9e, roughness: 0.35, metalness: 0.85 });
+    var brakePedal = new THREE.Mesh(
+      new THREE.BoxGeometry(0.18, 0.014, 0.014),
+      bpMat
+    );
+    brakePedal.position.set(0.06, motorY - 0.20, 0.22);
+    bikeGroup.add(brakePedal);
+    var shiftLever = new THREE.Mesh(
+      new THREE.BoxGeometry(0.16, 0.012, 0.012),
+      bpMat
+    );
+    shiftLever.position.set(0.04, motorY - 0.20, -0.22);
+    bikeGroup.add(shiftLever);
+
+    // ---- Bar pad (foam piece across the handlebars) ----
+    var barPad = new THREE.Mesh(
+      new THREE.BoxGeometry(0.04, 0.06, 0.34),
+      new THREE.MeshStandardMaterial({ color: 0xc81a1a, roughness: 0.85 })
+    );
+    barPad.position.set(halfWB - 0.05, P.wheelR + 1.24, 0);
+    bikeGroup.add(barPad);
+
+    // ---- Brake / clutch levers ----
+    var leverMat = new THREE.MeshStandardMaterial({ color: 0xc0c0c4, roughness: 0.25, metalness: 0.9 });
+    for (var lv = -1; lv <= 1; lv += 2) {
+      var lever = new THREE.Mesh(
+        new THREE.BoxGeometry(0.10, 0.012, 0.012),
+        leverMat
+      );
+      lever.position.set(halfWB - 0.10, P.wheelR + 1.22, lv * 0.24);
+      lever.rotation.z = -0.2;
+      bikeGroup.add(lever);
+    }
+
+    // ---- Kickstand (a small foot down-left from motor) ----
+    var kick = new THREE.Mesh(
+      new THREE.BoxGeometry(0.025, 0.20, 0.025),
+      pegMat
+    );
+    kick.position.set(-0.18, motorY - 0.30, 0.20);
+    kick.rotation.z = 0.35;
+    bikeGroup.add(kick);
+
+    // ---- Front axle (visible at wheel center) ----
+    var axleMat = new THREE.MeshStandardMaterial({ color: 0x88888c, roughness: 0.3, metalness: 0.9 });
+    var frontAxle = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.022, 0.022, 0.28, 12),
+      axleMat
+    );
+    frontAxle.position.set(halfWB, P.wheelR, 0);
+    frontAxle.rotation.x = Math.PI / 2;
+    bikeGroup.add(frontAxle);
+    var rearAxle = frontAxle.clone();
+    rearAxle.position.x = -halfWB;
+    bikeGroup.add(rearAxle);
+
+    // ---- Bash plate (skid plate under engine) ----
+    var bashGeom = new THREE.BoxGeometry(0.48, 0.025, 0.30);
+    var bash = new THREE.Mesh(bashGeom, new THREE.MeshStandardMaterial({ color: 0x1a1a1d, roughness: 0.5, metalness: 0.7 }));
+    bash.position.set(0.0, motorY - 0.25, 0);
+    bash.castShadow = true;
+    bikeGroup.add(bash);
   }
 
   // ---- CRUISER BODY (Super73 / Onyx) -- low long frame, fat tires ----
