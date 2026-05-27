@@ -236,6 +236,64 @@
     @media (max-width: 480px) {
       .builder-footer__actions .btn--save { display: none; }
     }
+
+    /* ===== 3D viewer ===== */
+    .bike-3d-section {
+      background: linear-gradient(180deg, #FFFFFF 0%, #F5F5F5 100%);
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .bike-3d-viewer {
+      max-width: var(--container-wide);
+      margin: 0 auto;
+      height: 480px;
+      position: relative;
+      touch-action: none; /* let three.js handle drag/pinch */
+    }
+    #bike-3d-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      cursor: grab;
+    }
+    #bike-3d-canvas:active { cursor: grabbing; }
+    .bike-3d-hint {
+      position: absolute;
+      bottom: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 11px;
+      color: #555;
+      background: rgba(255,255,255,0.92);
+      padding: 5px 14px;
+      border-radius: 999px;
+      pointer-events: none;
+      letter-spacing: 0.04em;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+    .bike-3d-label {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      color: #1a1a1a;
+      pointer-events: none;
+    }
+    .bike-3d-label .eyebrow { color: var(--accent); margin-bottom: 2px; }
+    .bike-3d-label .title { font-size: 18px; font-weight: 500; color: #0a0a0a; }
+    .bike-3d-fallback {
+      display: none;
+      padding: var(--space-6);
+      text-align: center;
+      color: var(--text-secondary);
+    }
+    .no-webgl .bike-3d-viewer { display: none; }
+    .no-webgl .bike-3d-fallback { display: block; }
+    @media (max-width: 720px) {
+      .bike-3d-viewer { height: 340px; }
+      .bike-3d-label { top: 10px; left: 12px; }
+      .bike-3d-label .title { font-size: 15px; }
+    }
   </style>
 </head>
 <body>
@@ -257,6 +315,21 @@
   </header>
 
   <main class="builder">
+
+    <!-- ===== 3D bike viewer (big, drag to rotate) ===== -->
+    <section class="bike-3d-section">
+      <div class="bike-3d-viewer" id="bike-3d-viewer">
+        <canvas id="bike-3d-canvas"></canvas>
+        <div class="bike-3d-label">
+          <p class="eyebrow" id="bike-3d-eyebrow">Live preview</p>
+          <p class="title" id="bike-3d-title">Sur-Ron Light Bee X</p>
+        </div>
+        <div class="bike-3d-hint">Drag to rotate · scroll to zoom</div>
+      </div>
+      <div class="bike-3d-fallback">
+        Your browser doesn't support 3D rendering. Scroll down to see your live bike preview.
+      </div>
+    </section>
 
     <!-- Sticky hero: bike preview + live total -->
     <div class="builder-hero">
@@ -299,9 +372,28 @@
     </div>
   </div>
 
-  <script src="assets/js/data.js"></script>
-  <script src="assets/js/bikes.js"></script>
-  <script src="assets/js/build.js"></script>
-  <script src="assets/js/app.js"></script>
+  <!-- Three.js for the 3D bike viewer -->
+  <script src="https://unpkg.com/three@0.140.0/build/three.min.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/three@0.140.0/examples/js/controls/OrbitControls.js" crossorigin="anonymous"></script>
+
+  <script src="assets/js/data.js?v=3d1"></script>
+  <script src="assets/js/bikes.js?v=3d1"></script>
+  <script src="assets/js/bike3d.js?v=3d1"></script>
+  <script src="assets/js/build.js?v=3d1"></script>
+  <script src="assets/js/app.js?v=3d1"></script>
+
+  <script>
+    // Detect WebGL support; if missing, hide the 3D viewer + show fallback
+    (function () {
+      try {
+        var c = document.createElement('canvas');
+        if (!(c.getContext('webgl') || c.getContext('experimental-webgl'))) {
+          document.documentElement.classList.add('no-webgl');
+        }
+      } catch (e) {
+        document.documentElement.classList.add('no-webgl');
+      }
+    })();
+  </script>
 </body>
 </html>

@@ -223,6 +223,8 @@
       if (badge) badge.textContent = opt.name;
       renderTotal();
       persist();
+      // Push live update into 3D viewer (plate / wheel / etc.)
+      update3D();
     }
     card.addEventListener('click', activate);
     card.addEventListener('keydown', function (e) {
@@ -257,6 +259,30 @@
   }
   var ORANGE_HUE = hexToHue('#FF5A1F'); // ~17
 
+  // Plate option id -> hex color (used for 3D model + future visualizations)
+  var PLATE_COLOR_MAP = {
+    'no-plate':       null,
+    'plate-orange':   '#FF5A1F',
+    'plate-white':    '#FFFFFF',
+    'plate-black':    '#0A0A0A',
+    'plate-red':      '#D11515',
+    'plate-blue':     '#1F4FAA',
+    'plate-lime':     '#C8FF00',
+    'plate-pink':     '#FF50AA',
+    'plate-yellow':   '#F7C800',
+    'plate-holo':     '#C8C8E0',
+    'plate-carbon':   '#1A1A1A',
+    'plate-chrome':   '#DDDDDD',
+    'plate-race-num': '#FFFFFF'
+  };
+
+  // Wheels option id -> rim hex
+  var WHEEL_COLOR_MAP = {
+    'stock-wheels':  '#222226',
+    'warp9-1619':    '#0A0A0A',   // anodized black
+    'excel-kke':     '#C9A227'    // anodized gold
+  };
+
   // ---------- Bike preview + total ----------
   function renderPreview() {
     var stage = $('#builder-stage');
@@ -281,6 +307,33 @@
     }
     var bike = DATA.findBike(state.bikeSlug);
     $('#builder-bike-label').textContent = 'Building · ' + bike.name;
+
+    // ---- 3D viewer sync ----
+    update3D();
+  }
+
+  // Push the entire current builder state into the Three.js viewer.
+  // Called any time the bike, frame color, or any mod changes.
+  function update3D() {
+    if (!window.bike3d || !window.bike3d.isReady()) return;
+    var bike = DATA.findBike(state.bikeSlug);
+    // Frame color
+    window.bike3d.setFrameColor(state.frameColor.hex);
+    // Plate color
+    var plateOptId = state.selections['plate'];
+    var plateHex = PLATE_COLOR_MAP[plateOptId];
+    if (plateHex) window.bike3d.setPlateColor(plateHex);
+    // Wheel rim color
+    var wheelOptId = state.selections['wheels'];
+    var wheelHex = WHEEL_COLOR_MAP[wheelOptId];
+    if (wheelHex) window.bike3d.setWheelRimColor(wheelHex);
+    // Bike-specific tweaks
+    window.bike3d.setBike(state.bikeSlug);
+    // Update the 3D viewer label too
+    var eyebrow = document.getElementById('bike-3d-eyebrow');
+    var title = document.getElementById('bike-3d-title');
+    if (eyebrow) eyebrow.textContent = bike.brand;
+    if (title) title.textContent = bike.name;
   }
 
   function renderTotal() {
@@ -396,6 +449,21 @@
     });
   }
 
+  // Poll for bike3d readiness and push state when ready
+  function waitForBike3D() {
+    var tries = 0;
+    var iv = setInterval(function () {
+      tries++;
+      if (window.bike3d && window.bike3d.isReady && window.bike3d.isReady()) {
+        clearInterval(iv);
+        update3D();
+      } else if (tries > 60) {
+        // ~6 seconds — give up (Three.js failed to load or WebGL missing)
+        clearInterval(iv);
+      }
+    }, 100);
+  }
+
   // ---------- Init ----------
   hydrateFromStorage();
   document.addEventListener('DOMContentLoaded', function () {
@@ -407,5 +475,6 @@
     renderTotal();
     $('#save-wishlist-btn').addEventListener('click', saveToWishlist);
     $('#add-to-cart-btn').addEventListener('click', addToCart);
+    waitForBike3D();
   });
 })();
