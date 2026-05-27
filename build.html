@@ -12,6 +12,7 @@
     .builder { padding-bottom: 96px; }
 
     .builder-hero {
+      position: -webkit-sticky;
       position: sticky;
       top: 52px;
       z-index: 20;
@@ -21,17 +22,18 @@
     .builder-hero__inner {
       max-width: var(--container-wide);
       margin: 0 auto;
-      padding: var(--space-4) var(--space-5) var(--space-5);
+      padding: var(--space-3) var(--space-5);
       display: grid;
-      grid-template-columns: 1fr auto;
-      gap: var(--space-5);
+      grid-template-columns: 120px 1fr;
+      gap: var(--space-4);
       align-items: center;
     }
     .builder-hero__stage {
       background: #FFFFFF;
-      border-radius: var(--radius-lg);
-      padding: var(--space-3) var(--space-4);
-      height: 140px;
+      border-radius: var(--radius-md);
+      padding: 4px 8px;
+      height: 64px;
+      width: 120px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -44,34 +46,43 @@
       display: block;
       transition: filter var(--dur-base) var(--ease-out);
     }
-    .builder-hero__meta { text-align: right; }
+    .builder-hero__meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: var(--space-3);
+    }
     .builder-hero__bike {
       font-size: 13px;
       color: var(--text-secondary);
       letter-spacing: 0.02em;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     .builder-hero__total {
-      font-size: 26px;
+      font-size: 22px;
       font-weight: 500;
       color: var(--accent);
       font-variant-numeric: tabular-nums;
+      flex-shrink: 0;
     }
     .builder-hero__pill-row {
       max-width: var(--container-wide);
       margin: 0 auto;
-      padding: 0 var(--space-5) var(--space-3);
+      padding: 0 var(--space-5) var(--space-2);
       display: flex;
       gap: 6px;
       overflow-x: auto;
       scrollbar-width: none;
     }
     .builder-hero__pill-row::-webkit-scrollbar { display: none; }
-    .builder-hero__pill-row .chip { white-space: nowrap; cursor: pointer; }
+    .builder-hero__pill-row .chip { white-space: nowrap; cursor: pointer; font-size: 12px; padding: 4px 10px; }
     @media (max-width: 720px) {
-      .builder-hero__inner { grid-template-columns: 1fr; padding: var(--space-3) var(--space-4); gap: var(--space-3); }
-      .builder-hero__stage { height: 110px; }
-      .builder-hero__meta { text-align: left; display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-3); }
-      .builder-hero__total { font-size: 22px; }
+      .builder-hero__inner { grid-template-columns: 100px 1fr; padding: var(--space-2) var(--space-4); gap: var(--space-3); }
+      .builder-hero__stage { height: 52px; width: 100px; }
+      .builder-hero__total { font-size: 18px; }
+      .builder-hero__bike { font-size: 12px; }
     }
 
     .builder-section {
