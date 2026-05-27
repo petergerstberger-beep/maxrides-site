@@ -45,6 +45,18 @@
     var canvas = document.getElementById('bike-3d-canvas');
     if (!container || !canvas) return;
 
+    // Bail silently if the browser can't do WebGL — fallback message handles UX.
+    try {
+      var probe = document.createElement('canvas');
+      if (!(probe.getContext('webgl') || probe.getContext('experimental-webgl'))) {
+        document.documentElement.classList.add('no-webgl');
+        return;
+      }
+    } catch (e) {
+      document.documentElement.classList.add('no-webgl');
+      return;
+    }
+
     var w = container.clientWidth || 800;
     var h = container.clientHeight || 480;
 
