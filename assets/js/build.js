@@ -317,19 +317,17 @@
   function update3D() {
     if (!window.bike3d || !window.bike3d.isReady()) return;
     var bike = DATA.findBike(state.bikeSlug);
-    // Frame color
+    // Rebuild geometry FIRST if bike changed (creates fresh materials)
+    window.bike3d.setBike(state.bikeSlug);
+    // Then apply user-selected colors on top of the freshly-built materials
     window.bike3d.setFrameColor(state.frameColor.hex);
-    // Plate color
     var plateOptId = state.selections['plate'];
     var plateHex = PLATE_COLOR_MAP[plateOptId];
     if (plateHex) window.bike3d.setPlateColor(plateHex);
-    // Wheel rim color
     var wheelOptId = state.selections['wheels'];
     var wheelHex = WHEEL_COLOR_MAP[wheelOptId];
     if (wheelHex) window.bike3d.setWheelRimColor(wheelHex);
-    // Bike-specific tweaks
-    window.bike3d.setBike(state.bikeSlug);
-    // Update the 3D viewer label too
+    // Update the 3D viewer label
     var eyebrow = document.getElementById('bike-3d-eyebrow');
     var title = document.getElementById('bike-3d-title');
     if (eyebrow) eyebrow.textContent = bike.brand;
