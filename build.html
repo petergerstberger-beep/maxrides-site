@@ -282,12 +282,51 @@
       max-width: 100%;
       max-height: 100%;
       object-fit: contain;
-      filter: drop-shadow(0 36px 38px rgba(0,0,0,0.22)) drop-shadow(0 6px 10px rgba(0,0,0,0.12));
-      transition: filter 280ms ease, opacity 220ms ease;
+      filter:
+        drop-shadow(0 40px 36px rgba(0,0,0,0.28))
+        drop-shadow(0 10px 14px rgba(0,0,0,0.16));
+      transition: opacity 220ms ease;
       pointer-events: none;
       -webkit-user-drag: none;
+      position: relative;
+      z-index: 1;
     }
     .bike-3d-photo.is-swapping { opacity: 0; }
+    /* Frame color tint layer — masked to the bike silhouette (the cutout's
+       alpha), blended over the photo with `multiply` so blacks stay black,
+       whites desaturate, and chromatic colors paint the bike cleanly. */
+    .bike-3d-tint {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-color: #FF5A1F;
+      /* `color` blend: preserves the bike's luminance + texture and only
+         shifts hue. Means highlights, shadows, decals all stay readable. */
+      mix-blend-mode: color;
+      -webkit-mask-image: var(--bike-mask, none);
+              mask-image: var(--bike-mask, none);
+      -webkit-mask-size: contain;
+              mask-size: contain;
+      -webkit-mask-repeat: no-repeat;
+              mask-repeat: no-repeat;
+      -webkit-mask-position: center;
+              mask-position: center;
+      opacity: 0;
+      transition: opacity 280ms ease, background-color 280ms ease;
+      z-index: 2;
+    }
+    .bike-3d-tint.is-active { opacity: 0.85; }
+    /* Bright / white frame colors — color blend can't whiten, so swap to
+       a soft screen that desaturates and lifts mid-tones. */
+    .bike-3d-tint--bright {
+      mix-blend-mode: screen;
+      opacity: 0.32 !important;
+    }
+    /* Black / greyscale — multiply darkens the bike while preserving detail. */
+    .bike-3d-tint--neutral {
+      mix-blend-mode: multiply;
+      opacity: 0.6 !important;
+    }
     .bike-3d-shadow {
       position: absolute;
       left: 50%;
@@ -410,6 +449,7 @@
           <div class="bike-3d-shadow" id="bike-3d-shadow"></div>
           <div class="bike-3d-photo-wrap" id="bike-3d-photo-wrap">
             <img id="bike-3d-photo" class="bike-3d-photo" alt="" draggable="false">
+            <div id="bike-3d-tint" class="bike-3d-tint" aria-hidden="true"></div>
             <div class="bike-3d-plate is-hidden" id="bike-3d-plate" aria-hidden="true">73</div>
           </div>
         </div>
@@ -458,10 +498,10 @@
     </div>
   </div>
 
-  <script src="assets/js/data.js?v=4a"></script>
-  <script src="assets/js/bikes.js?v=4a"></script>
-  <script src="assets/js/bike-viewer.js?v=4a"></script>
-  <script src="assets/js/build.js?v=4a"></script>
-  <script src="assets/js/app.js?v=4a"></script>
+  <script src="assets/js/data.js?v=4b"></script>
+  <script src="assets/js/bikes.js?v=4b"></script>
+  <script src="assets/js/bike-viewer.js?v=4b"></script>
+  <script src="assets/js/build.js?v=4b"></script>
+  <script src="assets/js/app.js?v=4b"></script>
 </body>
 </html>

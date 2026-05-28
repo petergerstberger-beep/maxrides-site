@@ -45,7 +45,7 @@
   }
 
   // ---- DOM handles ----------------------------------------------
-  var viewer, stage, photoWrap, photoEl, plateEl, hintEl, shadowEl, eyebrowEl, titleEl;
+  var viewer, stage, photoWrap, photoEl, tintEl, plateEl, hintEl, shadowEl, eyebrowEl, titleEl;
   var initialized = false;
 
   // ---- View state ------------------------------------------------
@@ -81,6 +81,7 @@
     stage     = document.getElementById('bike-3d-stage');
     photoWrap = document.getElementById('bike-3d-photo-wrap');
     photoEl   = document.getElementById('bike-3d-photo');
+    tintEl    = document.getElementById('bike-3d-tint');
     plateEl   = document.getElementById('bike-3d-plate');
     hintEl    = document.getElementById('bike-3d-hint');
     shadowEl  = document.getElementById('bike-3d-shadow');
@@ -175,21 +176,6 @@
   }
 
   // ---- Public API ----------------------------------------------
-  function hueToRotateDeg(targetHex, baseHue) {
-    // Approximate hue rotation needed to move a "baseHue"-tinted
-    // photo toward the target color. Greyscale targets get a saturation
-    // wash; chromatic targets get a hue-rotate.
-    var hsl = hexToHSL(targetHex);
-    if (hsl.s < 0.18) {
-      // Approaching grey/white/black — desaturate + brightness shift
-      var bri = 0.6 + (hsl.l * 0.9);
-      var sat = 0.25;
-      return { filter: 'brightness(' + bri.toFixed(2) + ') saturate(' + sat.toFixed(2) + ')' };
-    }
-    var delta = (hsl.h - (baseHue || 0));
-    return { filter: 'hue-rotate(' + Math.round(delta) + 'deg) saturate(1.05)' };
-  }
-
   function setBike(slug) {
     if (!initialized) return;
     if (slug === v.slug) return;
@@ -197,34 +183,51 @@
     var data = window.MAXRIDES_DATA;
     var bike = data && data.findBike(slug);
     if (!bike) return;
+    // Prefer the clean transparent cutout; fall back to original photoUrl.
+    var src = bike.cutoutUrl || bike.photoUrl || '';
     // Smooth photo swap
     photoEl.classList.add('is-swapping');
+    if (tintEl) tintEl.classList.remove('is-active');
     setTimeout(function () {
-      photoEl.src = bike.photoUrl || '';
+      photoEl.src = src;
       photoEl.alt = bike.name;
       photoEl.classList.remove('is-swapping');
+      // Mask the tint layer to the bike silhouette using the same cutout.
+      if (tintEl && src) {
+        tintEl.style.setProperty('--bike-mask', 'url("' + src + '")');
+      }
+      // Re-apply frame color once mask is set
+      applyFrameTint();
     }, 150);
     if (eyebrowEl) eyebrowEl.textContent = bike.brand;
     if (titleEl)   titleEl.textContent   = bike.name;
-    // Re-position plate per bike
-    repositionPlate();
-    // Re-apply frame color filter (baseHue may have changed)
-    applyFrameFilter();
   }
 
-  function applyFrameFilter() {
-    if (!photoEl) return;
-    var t = tuningFor(v.slug);
-    var out = hueToRotateDeg(v.frameHex, t.baseHue);
-    photoEl.style.filter =
-      'drop-shadow(0 36px 38px rgba(0,0,0,0.22))' +
-      ' drop-shadow(0 6px 10px rgba(0,0,0,0.12))' +
-      ' ' + out.filter;
+  function applyFrameTint() {
+    if (!tintEl) return;
+    // Decide blend mode based on color brightness/saturation:
+    //   bright/white   → screen (lightens bike toward target)
+    //   greyscale      → color  (light desaturation wash)
+    //   chromatic      → multiply (paints the bike that color cleanly)
+    var hsl = hexToHSL(v.frameHex);
+    tintEl.classList.remove('bike-3d-tint--bright', 'bike-3d-tint--neutral');
+    var blendClass = '';
+    if (hsl.l > 0.82 && hsl.s < 0.2) {
+      // arctic white, off-white
+      blendClass = 'bike-3d-tint--bright';
+    } else if (hsl.s < 0.15) {
+      // jet black, greyscale frame colors
+      blendClass = 'bike-3d-tint--neutral';
+    }
+    if (blendClass) tintEl.classList.add(blendClass);
+    tintEl.style.backgroundColor = v.frameHex;
+    // Activate tint only when color differs meaningfully from a "neutral" default.
+    tintEl.classList.add('is-active');
   }
 
   function setFrameColor(hex) {
     v.frameHex = hex;
-    applyFrameFilter();
+    applyFrameTint();
   }
 
   function setPlateColor(hex) {
