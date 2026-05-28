@@ -192,8 +192,10 @@
       // Unknown slug — render the dirt silhouette as a safe fallback
       return silDirt(accent || '#FF5A1F');
     }
-    if (bike.photoUrl) {
-      return '<img src="' + bike.photoUrl + '" alt="' + bike.name + '" loading="lazy" class="bike-photo">';
+    // Prefer the cleaner transparent cutout when one exists.
+    var src = bike.cutoutUrl || bike.photoUrl;
+    if (src) {
+      return '<img src="' + src + '" alt="' + bike.name + '" loading="lazy" class="bike-photo">';
     }
     var renderer = window.BIKE_SVG[bike.silhouette] || silDirt;
     return renderer(accent || '#FF5A1F');
