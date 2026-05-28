@@ -177,6 +177,7 @@
       input.querySelector('input').addEventListener('input', function (e) {
         state.plateNumber = e.target.value.trim() || '73';
         persist();
+        update3D();
       });
       section.appendChild(input);
     }
@@ -312,22 +313,27 @@
     update3D();
   }
 
-  // Push the entire current builder state into the Three.js viewer.
-  // Called any time the bike, frame color, or any mod changes.
+  // Push the entire current builder state into the live viewer.
+  // Called any time the bike, frame color, plate, or any mod changes.
   function update3D() {
     if (!window.bike3d || !window.bike3d.isReady()) return;
     var bike = DATA.findBike(state.bikeSlug);
-    // Rebuild geometry FIRST if bike changed (creates fresh materials)
+    // Swap bike photo first (viewer guards against same-slug churn)
     window.bike3d.setBike(state.bikeSlug);
-    // Then apply user-selected colors on top of the freshly-built materials
+    // Frame tint
     window.bike3d.setFrameColor(state.frameColor.hex);
+    // Plate (color + number). null hex hides the plate.
     var plateOptId = state.selections['plate'];
     var plateHex = PLATE_COLOR_MAP[plateOptId];
-    if (plateHex) window.bike3d.setPlateColor(plateHex);
+    window.bike3d.setPlateColor(plateHex == null ? null : plateHex);
+    if (window.bike3d.setPlateText) window.bike3d.setPlateText(state.plateNumber);
+    // Wheel rim — Phase-2 (no-op until per-part masks land)
     var wheelOptId = state.selections['wheels'];
     var wheelHex = WHEEL_COLOR_MAP[wheelOptId];
-    if (wheelHex) window.bike3d.setWheelRimColor(wheelHex);
-    // Update the 3D viewer label
+    if (wheelHex && window.bike3d.setWheelRimColor) {
+      window.bike3d.setWheelRimColor(wheelHex);
+    }
+    // Update viewer label
     var eyebrow = document.getElementById('bike-3d-eyebrow');
     var title = document.getElementById('bike-3d-title');
     if (eyebrow) eyebrow.textContent = bike.brand;
