@@ -138,6 +138,10 @@
         renderTotal();
         $('#selected-color').textContent = color.name;
         persist();
+        // Frame color counts as a customization — react the bike.
+        if (window.bike3d && window.bike3d.setMod) {
+          window.bike3d.setMod('color', color.id);
+        }
       });
       row.appendChild(btn);
     });
@@ -224,8 +228,13 @@
       if (badge) badge.textContent = opt.name;
       renderTotal();
       persist();
-      // Push live update into 3D viewer (plate / wheel / etc.)
+      // Push live update into the viewer state
       update3D();
+      // Then fire the per-category react animation — the bike pulses,
+      // the price flashes, every tap visibly changes the model.
+      if (window.bike3d && window.bike3d.setMod) {
+        window.bike3d.setMod(cat.id, opt.id);
+      }
     }
     card.addEventListener('click', activate);
     card.addEventListener('keydown', function (e) {

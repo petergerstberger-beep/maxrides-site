@@ -24,34 +24,45 @@
   // visually on each bike's front number-plate area). These are
   // hand-tuned for the existing single-photo product images. When
   // we get real 360° frames in Phase 2 this becomes a per-angle map.
+  // Right-facing bikes have photoFlip:false. Left-facing bikes get
+  // photoFlip:true so the rendered output is consistently right-facing
+  // (matches the rotation drag direction and unifies the lineup).
+  // plateX/Y are percentages of the photo wrapper, in the bike's *unflipped*
+  // coordinate space — when photoFlip is true we mirror plateX in applyTransform.
+  // photoFlip: true for original photos that face LEFT, so they render facing
+  // RIGHT and the lineup is consistent. Verified by direct inspection of each
+  // cutout image — only 2 of 13 actually need flipping.
+  // plateX/Y are percentages of the photo wrapper (rendered space), tuned
+  // to sit just above the front wheel between the fork stems for each bike.
   var BIKE_TUNING = {
-    'sur-ron-light-bee-x':    { plateX: 22,  plateY: 36, plateScale: 1.00, photoFlip: false, baseHue: 17 },
-    'sur-ron-ultra-bee':      { plateX: 22,  plateY: 36, plateScale: 1.00, photoFlip: false, baseHue: 0  },
-    'talaria-dragon':         { plateX: 24,  plateY: 32, plateScale: 1.05, photoFlip: false, baseHue: 0  },
-    'talaria-sting-mx4':      { plateX: 24,  plateY: 34, plateScale: 1.00, photoFlip: false, baseHue: 220 },
-    'stark-varg':             { plateX: 26,  plateY: 30, plateScale: 1.10, photoFlip: false, baseHue: 0  },
-    'etm-rtr-xl':             { plateX: 22,  plateY: 34, plateScale: 1.00, photoFlip: false, baseHue: 0  },
-    'etm-rtr-sport':          { plateX: 22,  plateY: 34, plateScale: 1.00, photoFlip: false, baseHue: 0  },
-    'etm-rtr-lite':           { plateX: 22,  plateY: 38, plateScale: 0.85, photoFlip: false, baseHue: 0  },
-    'rawrr-mantis':           { plateX: 22,  plateY: 36, plateScale: 1.00, photoFlip: false, baseHue: 0  },
-    'super73-rx':             { plateX: 14,  plateY: 48, plateScale: 0.80, photoFlip: false, baseHue: 0  },
-    'super73-zx':             { plateX: 14,  plateY: 50, plateScale: 0.75, photoFlip: false, baseHue: 0  },
-    'onyx-rcr':               { plateX: 16,  plateY: 46, plateScale: 0.85, photoFlip: false, baseHue: 0  },
-    'super73-zx-le-speedway': { plateX: 14,  plateY: 50, plateScale: 0.75, photoFlip: false, baseHue: 0  }
+    'sur-ron-light-bee-x':    { plateX: 78, plateY: 30, plateScale: 0.55, photoFlip: false },
+    'sur-ron-ultra-bee':      { plateX: 78, plateY: 30, plateScale: 0.55, photoFlip: false },
+    'talaria-dragon':         { plateX: 76, plateY: 26, plateScale: 0.60, photoFlip: false },
+    'talaria-sting-mx4':      { plateX: 76, plateY: 28, plateScale: 0.55, photoFlip: true  },
+    'stark-varg':             { plateX: 80, plateY: 28, plateScale: 0.65, photoFlip: false },
+    'etm-rtr-xl':             { plateX: 76, plateY: 30, plateScale: 0.55, photoFlip: false },
+    'etm-rtr-sport':          { plateX: 76, plateY: 26, plateScale: 0.50, photoFlip: false },
+    'etm-rtr-lite':           { plateX: 80, plateY: 36, plateScale: 0.45, photoFlip: false },
+    'rawrr-mantis':           { plateX: 76, plateY: 22, plateScale: 0.55, photoFlip: true  },
+    'super73-rx':             { plateX: 64, plateY: 44, plateScale: 0.40, photoFlip: false },
+    'super73-zx':             { plateX: 64, plateY: 44, plateScale: 0.40, photoFlip: false },
+    'onyx-rcr':               { plateX: 64, plateY: 42, plateScale: 0.45, photoFlip: false },
+    'super73-zx-le-speedway': { plateX: 64, plateY: 44, plateScale: 0.40, photoFlip: false }
   };
 
   function tuningFor(slug) {
-    return BIKE_TUNING[slug] || { plateX: 22, plateY: 36, plateScale: 1, photoFlip: false, baseHue: 17 };
+    return BIKE_TUNING[slug] || { plateX: 50, plateY: 50, plateScale: 0.5, photoFlip: false };
   }
 
   // ---- DOM handles ----------------------------------------------
-  var viewer, stage, photoWrap, photoEl, tintEl, plateEl, hintEl, shadowEl, eyebrowEl, titleEl;
+  var viewer, stage, photoWrap, bikeLayer, photoEl, tintEl, rimEl, plateEl, hintEl, shadowEl, eyebrowEl, titleEl;
   var initialized = false;
 
   // ---- View state ------------------------------------------------
   var v = {
     slug: null,
     frameHex: '#FF5A1F',
+    rimHex: null,           // set by setWheelRimColor or wheel-option mapping
     plateHex: null,
     plateText: '73',
     plateLightText: false,
@@ -80,8 +91,10 @@
     viewer    = document.getElementById('bike-3d-viewer');
     stage     = document.getElementById('bike-3d-stage');
     photoWrap = document.getElementById('bike-3d-photo-wrap');
+    bikeLayer = document.getElementById('bike-3d-bike-layer');
     photoEl   = document.getElementById('bike-3d-photo');
     tintEl    = document.getElementById('bike-3d-tint');
+    rimEl     = document.getElementById('bike-3d-rim-tint');
     plateEl   = document.getElementById('bike-3d-plate');
     hintEl    = document.getElementById('bike-3d-hint');
     shadowEl  = document.getElementById('bike-3d-shadow');
@@ -154,14 +167,13 @@
   function applyTransform() {
     if (!stage) return;
     var yaw = v.yaw;
-    var t = tuningFor(v.slug);
-    var flip = t.photoFlip ? -1 : 1;
     // Subtle scale-up at oblique angles fakes the "the bike is turning toward me" feel
     var scaleBoost = 1 + (Math.abs(yaw) / MAX_YAW) * 0.04;
     var rotX = -2 + (Math.abs(yaw) / MAX_YAW) * 1.2; // very slight pitch
-    // The photo wrapper rotates in 3D. We also gently scaleX flip when needed.
+    // photoWrap rotates in 3D. Mirroring is handled by the inner bike-layer
+    // (via .is-flipped class), so we don't multiply yaw by a flip factor anymore.
     photoWrap.style.transform =
-      'rotateY(' + (yaw * flip) + 'deg)' +
+      'rotateY(' + yaw + 'deg)' +
       ' rotateX(' + rotX + 'deg)' +
       ' scale(' + scaleBoost + ')';
 
@@ -175,6 +187,13 @@
     }
   }
 
+  // Resolve the per-part mask URLs for a bike. Hand-cut PNGs live at
+  // assets/img/bikes/masks/<slug>-<part>.webp. We only ship frame/rims/wheels
+  // for now; everything else falls back to the full cutout silhouette.
+  function maskUrl(slug, part) {
+    return 'assets/img/bikes/masks/' + slug + '-' + part + '.webp';
+  }
+
   // ---- Public API ----------------------------------------------
   function setBike(slug) {
     if (!initialized) return;
@@ -185,19 +204,36 @@
     if (!bike) return;
     // Prefer the clean transparent cutout; fall back to original photoUrl.
     var src = bike.cutoutUrl || bike.photoUrl || '';
+    var t = tuningFor(slug);
+    // Apply photoFlip immediately — the bike-layer mirrors before the photo loads,
+    // so when the new photo comes in it appears already-flipped (no pop).
+    if (bikeLayer) {
+      bikeLayer.classList.toggle('is-flipped', !!t.photoFlip);
+    }
     // Smooth photo swap
     photoEl.classList.add('is-swapping');
     if (tintEl) tintEl.classList.remove('is-active');
+    if (rimEl) rimEl.classList.remove('is-active');
     setTimeout(function () {
       photoEl.src = src;
       photoEl.alt = bike.name;
       photoEl.classList.remove('is-swapping');
-      // Mask the tint layer to the bike silhouette using the same cutout.
       if (tintEl && src) {
+        // --bike-mask still gets set (kept around for legacy reasons / fallback)
         tintEl.style.setProperty('--bike-mask', 'url("' + src + '")');
+        // --frame-mask drives the frame-only tint. Falls back to the cutout if
+        // the per-bike frame.webp doesn't exist (mask-image handles 404 by
+        // showing nothing, so we wire fallback in CSS via two background-images
+        // — see build.html .bike-3d-tint).
+        tintEl.style.setProperty('--frame-mask', 'url("' + maskUrl(slug, 'frame') + '")');
       }
-      // Re-apply frame color once mask is set
+      if (rimEl) {
+        rimEl.style.setProperty('--rim-mask', 'url("' + maskUrl(slug, 'rims') + '")');
+      }
+      // Re-apply frame color + plate anchor once mask is set
       applyFrameTint();
+      applyRimTint();
+      repositionPlate();
     }, 150);
     if (eyebrowEl) eyebrowEl.textContent = bike.brand;
     if (titleEl)   titleEl.textContent   = bike.name;
@@ -205,24 +241,53 @@
 
   function applyFrameTint() {
     if (!tintEl) return;
-    // Decide blend mode based on color brightness/saturation:
-    //   bright/white   → screen (lightens bike toward target)
-    //   greyscale      → color  (light desaturation wash)
-    //   chromatic      → multiply (paints the bike that color cleanly)
-    var hsl = hexToHSL(v.frameHex);
-    tintEl.classList.remove('bike-3d-tint--bright', 'bike-3d-tint--neutral');
-    var blendClass = '';
+    var hex = v.frameHex;
+    var hsl = hexToHSL(hex);
+    // Per-color blend strategy. The frame mask isolates JUST the frame now,
+    // so we can be aggressive — wheels/tires/seat stay their original color.
+    var blend, op, bg;
     if (hsl.l > 0.82 && hsl.s < 0.2) {
-      // arctic white, off-white
-      blendClass = 'bike-3d-tint--bright';
+      // Arctic white: paint frame mask white with screen blend, high opacity.
+      // Screen + high opacity lifts even deeply pigmented frames (Stark VARG red).
+      bg = '#FFFFFF';
+      blend = 'screen';
+      op = 0.85;
+    } else if (hsl.s < 0.15 && hsl.l < 0.25) {
+      // Jet black: multiply darkens the frame strongly.
+      bg = hex;
+      blend = 'multiply';
+      op = 0.92;
     } else if (hsl.s < 0.15) {
-      // jet black, greyscale frame colors
-      blendClass = 'bike-3d-tint--neutral';
+      // Mid-grey: color blend desaturates without darkening.
+      bg = hex;
+      blend = 'color';
+      op = 0.9;
+    } else {
+      // Chromatic (orange, lime, purple, red): color blend preserves luminance,
+      // shifts hue. Highlights and decals stay readable.
+      bg = hex;
+      blend = 'color';
+      op = 0.95;
     }
-    if (blendClass) tintEl.classList.add(blendClass);
-    tintEl.style.backgroundColor = v.frameHex;
-    // Activate tint only when color differs meaningfully from a "neutral" default.
+    tintEl.style.backgroundColor = bg;
+    tintEl.style.mixBlendMode = blend;
+    tintEl.style.opacity = op;
     tintEl.classList.add('is-active');
+  }
+
+  function applyRimTint() {
+    if (!rimEl) return;
+    // Rim tint comes from either an explicit color (setWheelRimColor) or the
+    // currently-selected wheel option (Warp 9 = gold anodized, Excel KKE =
+    // blackened, stock = no tint). Default to no tint.
+    if (!v.rimHex) {
+      rimEl.classList.remove('is-active');
+      return;
+    }
+    rimEl.style.backgroundColor = v.rimHex;
+    rimEl.style.mixBlendMode = 'color';
+    rimEl.style.opacity = 0.9;
+    rimEl.classList.add('is-active');
   }
 
   function setFrameColor(hex) {
@@ -252,9 +317,74 @@
   }
 
   function repositionPlate() {
-    // Plate is a fixed lower-right preview chip — positioning is CSS-driven
-    // so it works across all 13 bike photos without per-photo masks.
-    // This function stays as a hook for Phase 2 when we have per-bike masks.
+    // Anchor the plate to the bike's front number-plate region using per-bike
+    // tuning. plateX/Y are percentages of the photo wrap (0=left/top, 100=right/bottom).
+    if (!plateEl) return;
+    var t = tuningFor(v.slug);
+    plateEl.style.left = t.plateX + '%';
+    plateEl.style.top = t.plateY + '%';
+    plateEl.style.right = 'auto';
+    plateEl.style.bottom = 'auto';
+    plateEl.style.transform = 'translate(-50%, -50%) rotate(-4deg) scale(' + (t.plateScale || 1) + ')';
+  }
+
+  function setWheelRimColor(hex) {
+    v.rimHex = hex || null;
+    applyRimTint();
+  }
+
+  // Generic per-category hook. build.js calls this when a non-color, non-plate
+  // category selection changes. Most categories just trigger the "react" feedback
+  // — a brief yaw nudge + price-pulse + chip-fly — so the user feels their tap
+  // landed on the bike even when we don't have an anchored overlay yet.
+  var WHEEL_TINT_BY_OPT = {
+    'warp9-1619': '#D4A537',   // gold anodized
+    'excel-kke':  '#0F0F0F',   // blackened
+    'stock-wheels': null
+  };
+  function setMod(catId, optId) {
+    if (!initialized) return;
+    // Wheels override rim tint based on the selected option.
+    if (catId === 'wheels') {
+      var c = WHEEL_TINT_BY_OPT.hasOwnProperty(optId) ? WHEEL_TINT_BY_OPT[optId] : null;
+      v.rimHex = c;
+      applyRimTint();
+    }
+    reactToTap();
+  }
+
+  // Brief yaw wiggle + scale-pulse on the bike + price-pulse so every
+  // customization tap visibly lands. De-bounces rapid taps.
+  var reactTs = 0;
+  function reactToTap() {
+    var now = performance.now();
+    if (now - reactTs < 220) return;
+    reactTs = now;
+    // 8° yaw nudge that the damped loop relaxes back toward zero / auto-drift
+    var dir = Math.random() < 0.5 ? -1 : 1;
+    v.targetYaw = (v.yaw || 0) + 8 * dir;
+    v.autoRotate = false;
+    v.lastInteractTs = now;
+    // Scale-pulse the bike (CSS animation, restart-friendly)
+    if (bikeLayer) {
+      bikeLayer.classList.remove('is-reacting');
+      // force reflow so the animation restarts even on rapid taps
+      void bikeLayer.offsetWidth;
+      bikeLayer.classList.add('is-reacting');
+      setTimeout(function () {
+        if (bikeLayer) bikeLayer.classList.remove('is-reacting');
+      }, 340);
+    }
+    // Pulse the visible price elements
+    var priceEls = document.querySelectorAll(
+      '#builder-total, #footer-total, .builder-hero__total, .builder-footer__total .value'
+    );
+    priceEls.forEach(function (el) {
+      el.classList.remove('is-pulsing');
+      void el.offsetWidth;
+      el.classList.add('is-pulsing');
+      setTimeout(function () { el.classList.remove('is-pulsing'); }, 340);
+    });
   }
 
   // ---- Color utils ---------------------------------------------
@@ -295,7 +425,8 @@
     setFrameColor: setFrameColor,
     setPlateColor: setPlateColor,
     setPlateText: setPlateText,
-    // Phase-2 hooks (no-op in v1 — needs per-part masks):
-    setWheelRimColor: function () {}
+    setWheelRimColor: setWheelRimColor,
+    // Generic per-category hook — build.js routes every customization change here
+    setMod: setMod
   };
 })();

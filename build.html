@@ -278,6 +278,19 @@
       will-change: transform, filter;
       transition: filter 280ms ease;
     }
+    /* bike-layer wraps the photo + tints. Flipped (scaleX(-1)) for left-facing
+       bike photos so all 13 bikes face the same direction in the rendered output. */
+    .bike-3d-bike-layer {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform-origin: center center;
+      transition: transform 380ms cubic-bezier(.2,.7,.2,1);
+      will-change: transform;
+    }
+    .bike-3d-bike-layer.is-flipped { transform: scaleX(-1); }
     .bike-3d-photo {
       max-width: 100%;
       max-height: 100%;
@@ -292,19 +305,17 @@
       z-index: 1;
     }
     .bike-3d-photo.is-swapping { opacity: 0; }
-    /* Frame color tint layer — masked to the bike silhouette (the cutout's
-       alpha), blended over the photo with `multiply` so blacks stay black,
-       whites desaturate, and chromatic colors paint the bike cleanly. */
+    /* Frame tint layer — masked to JUST the frame (per-bike <slug>-frame.webp).
+       Wheels, tires, seat keep their original color. CSS sets up the masking
+       chain; bike-viewer.js picks blend mode + opacity per chosen color. */
     .bike-3d-tint {
       position: absolute;
       inset: 0;
       pointer-events: none;
       background-color: #FF5A1F;
-      /* `color` blend: preserves the bike's luminance + texture and only
-         shifts hue. Means highlights, shadows, decals all stay readable. */
       mix-blend-mode: color;
-      -webkit-mask-image: var(--bike-mask, none);
-              mask-image: var(--bike-mask, none);
+      -webkit-mask-image: var(--frame-mask, var(--bike-mask, none));
+              mask-image: var(--frame-mask, var(--bike-mask, none));
       -webkit-mask-size: contain;
               mask-size: contain;
       -webkit-mask-repeat: no-repeat;
@@ -315,18 +326,29 @@
       transition: opacity 280ms ease, background-color 280ms ease;
       z-index: 2;
     }
-    .bike-3d-tint.is-active { opacity: 0.85; }
-    /* Bright / white frame colors — color blend can't whiten, so swap to
-       a soft screen that desaturates and lifts mid-tones. */
-    .bike-3d-tint--bright {
-      mix-blend-mode: screen;
-      opacity: 0.32 !important;
+    .bike-3d-tint.is-active { opacity: 0.95; }
+    /* Rim tint layer — masked to JUST the wheel rims (<slug>-rims.webp).
+       Driven by setWheelRimColor or the selected wheels option (Warp 9 gold,
+       Excel KKE black, stock = no tint). */
+    .bike-3d-rim-tint {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-color: transparent;
+      mix-blend-mode: color;
+      -webkit-mask-image: var(--rim-mask, none);
+              mask-image: var(--rim-mask, none);
+      -webkit-mask-size: contain;
+              mask-size: contain;
+      -webkit-mask-repeat: no-repeat;
+              mask-repeat: no-repeat;
+      -webkit-mask-position: center;
+              mask-position: center;
+      opacity: 0;
+      transition: opacity 280ms ease, background-color 280ms ease;
+      z-index: 2;
     }
-    /* Black / greyscale — multiply darkens the bike while preserving detail. */
-    .bike-3d-tint--neutral {
-      mix-blend-mode: multiply;
-      opacity: 0.6 !important;
-    }
+    .bike-3d-rim-tint.is-active { opacity: 0.9; }
     .bike-3d-shadow {
       position: absolute;
       left: 50%;
@@ -339,13 +361,15 @@
       filter: blur(8px);
       will-change: transform, opacity;
     }
-    /* Plate preview chip — sits at lower-right of the viewer as a
-       config readout (not attached to the bike, because anchor points
-       differ per photo). Live updates as user picks plate color/number. */
+    /* Anchored number plate — positioned at the bike's actual front-plate
+       region per bike (plateX/Y in BIKE_TUNING). Sits inside photo-wrap so
+       it rotates with the bike during drag, but lives OUTSIDE bike-layer
+       so it isn't mirrored when the photo is flipped. */
     .bike-3d-plate {
       position: absolute;
-      right: 28px;
-      bottom: 78px;
+      /* left/top + the JS-set translate(-50%,-50%) center on the anchor */
+      left: 22%;
+      top: 36%;
       width: 88px;
       height: 88px;
       border-radius: 12px;
@@ -354,33 +378,54 @@
       justify-content: center;
       font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
       font-weight: 700;
-      font-size: 34px;
+      font-size: 28px;
       letter-spacing: 0.02em;
       color: #FFFFFF;
       background: #FF5A1F;
-      border: 2px solid rgba(0,0,0,0.08);
+      border: 2px solid rgba(0,0,0,0.18);
       box-shadow:
-        0 8px 22px rgba(0,0,0,0.22),
-        0 2px 6px rgba(0,0,0,0.12),
-        inset 0 0 0 3px rgba(255,255,255,0.18);
-      transform: rotate(-3deg);
-      transition: opacity 240ms ease, background-color 240ms ease, color 240ms ease, transform 240ms ease;
+        0 6px 18px rgba(0,0,0,0.28),
+        0 1px 3px rgba(0,0,0,0.18),
+        inset 0 0 0 3px rgba(255,255,255,0.22);
+      transform: translate(-50%,-50%) rotate(-4deg);
+      transform-origin: center center;
+      transition: opacity 260ms ease, background-color 240ms ease, color 240ms ease;
       pointer-events: none;
-      z-index: 3;
+      z-index: 4;
     }
-    .bike-3d-plate::before {
-      content: 'PLATE';
-      position: absolute;
-      top: -16px;
-      left: 0;
-      font-size: 9px;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      color: var(--text-tertiary);
-      text-align: left;
-    }
-    .bike-3d-plate.is-hidden { opacity: 0; transform: rotate(-3deg) scale(0.7); }
+    .bike-3d-plate.is-hidden { opacity: 0; }
     .bike-3d-plate--light { color: #0A0A0A; }
+
+    /* Tap-react pulse — bike-layer briefly scales up + shadow pulses
+       so every customization tap visibly lands on the model. */
+    @keyframes bike-react-pulse {
+      0%   { transform: scale(1);    }
+      50%  { transform: scale(1.045); }
+      100% { transform: scale(1);    }
+    }
+    @keyframes bike-react-pulse-flipped {
+      0%   { transform: scaleX(-1) scale(1);    }
+      50%  { transform: scaleX(-1) scale(1.045); }
+      100% { transform: scaleX(-1) scale(1);    }
+    }
+    .bike-3d-bike-layer.is-reacting {
+      animation: bike-react-pulse 320ms cubic-bezier(.2,.7,.2,1);
+    }
+    .bike-3d-bike-layer.is-reacting.is-flipped {
+      animation: bike-react-pulse-flipped 320ms cubic-bezier(.2,.7,.2,1);
+    }
+    /* Builder-total price-pulse synced with the bike react */
+    @keyframes price-pulse {
+      0%   { transform: scale(1);   color: var(--accent); }
+      50%  { transform: scale(1.08); color: #FF8A4F;       }
+      100% { transform: scale(1);   color: var(--accent); }
+    }
+    .builder-hero__total.is-pulsing,
+    .builder-footer__total .value.is-pulsing {
+      animation: price-pulse 320ms cubic-bezier(.2,.7,.2,1);
+      transform-origin: center right;
+      display: inline-block;
+    }
 
     .bike-3d-hint {
       position: absolute;
@@ -448,8 +493,14 @@
         <div class="bike-3d-stage" id="bike-3d-stage">
           <div class="bike-3d-shadow" id="bike-3d-shadow"></div>
           <div class="bike-3d-photo-wrap" id="bike-3d-photo-wrap">
-            <img id="bike-3d-photo" class="bike-3d-photo" alt="" draggable="false">
-            <div id="bike-3d-tint" class="bike-3d-tint" aria-hidden="true"></div>
+            <!-- bike-layer holds the photo + tint overlays. It can mirror via
+                 scaleX(-1) for left-facing bike photos without affecting the
+                 plate (which is anchored in rendered-space coords). -->
+            <div class="bike-3d-bike-layer" id="bike-3d-bike-layer">
+              <img id="bike-3d-photo" class="bike-3d-photo" alt="" draggable="false">
+              <div id="bike-3d-rim-tint" class="bike-3d-rim-tint" aria-hidden="true"></div>
+              <div id="bike-3d-tint" class="bike-3d-tint" aria-hidden="true"></div>
+            </div>
             <div class="bike-3d-plate is-hidden" id="bike-3d-plate" aria-hidden="true">73</div>
           </div>
         </div>
@@ -498,10 +549,10 @@
     </div>
   </div>
 
-  <script src="assets/js/data.js?v=4c"></script>
-  <script src="assets/js/bikes.js?v=4c"></script>
-  <script src="assets/js/bike-viewer.js?v=4c"></script>
-  <script src="assets/js/build.js?v=4c"></script>
-  <script src="assets/js/app.js?v=4c"></script>
+  <script src="assets/js/data.js?v=2b2"></script>
+  <script src="assets/js/bikes.js?v=2b2"></script>
+  <script src="assets/js/bike-viewer.js?v=2b2"></script>
+  <script src="assets/js/build.js?v=2b2"></script>
+  <script src="assets/js/app.js?v=2b2"></script>
 </body>
 </html>
